@@ -10,9 +10,9 @@
   "Return the location-decorated parse tree of s"
   (let [reader (rt/indexing-push-back-reader s)
         ;; EOF sentinel for r/read.  Make sure it's not in the string
-        ;; to be parsed.  
-        eof (loop [] (let [eof (gensym "parser-eof__")]
-                       (if (.contains s (str eof)) (recur) eof)))]
+        ;; to be parsed.
+        eof (->> #(gensym "parser-eof__") repeatedly
+                 (remove #(.contains s (str %))) first)]
     (take-while #(not (= eof %)) (repeatedly #(r/read reader nil eof)))))
 
 (defn line-starts [s]
