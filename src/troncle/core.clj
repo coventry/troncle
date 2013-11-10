@@ -46,10 +46,3 @@
                  %)
               fs))
 
-(user/starbreak)
-
-(let [f (parse-tree u/test-strings)
-      l (line-starts u/test-strings)
-      nf (mark-contained-forms l 5 50 f)]
-  (u/pprint (u/metadata-walk nf)))
-
