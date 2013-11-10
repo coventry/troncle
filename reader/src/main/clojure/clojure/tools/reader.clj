@@ -1,3 +1,10 @@
+;; Copied from tools.reader so that we can thread-safely bash its
+;; dispatch maps.  Using http://git-scm.com/book/ch6-7.html as a clean
+;; way to bring changes from tools.reader into here.  Threading the
+;; dispatch maps through the function calls so that they can be
+;; changed in a thread-safe way might be a way to get this to fly
+;; upstream...
+
 ;:   Copyright (c) Nicola Mometto, Rich Hickey & contributors.
 ;;   The use and distribution terms for this software are covered by the
 ;;   Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
@@ -8,7 +15,7 @@
 
 (ns ^{:doc "A clojure reader in clojure"
       :author "Bronsa"}
-  clojure.tools.reader
+  troncle.tools.reader
   (:refer-clojure :exclude [read read-line read-string char
                             default-data-readers *default-data-reader-fn*
                             *read-eval* *data-readers*])
