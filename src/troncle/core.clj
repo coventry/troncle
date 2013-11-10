@@ -17,11 +17,9 @@
 
 (defn line-starts [s]
   "Returns the offset in s of the start of each new line"
-  (let [m (re-matcher #"\r?\n" s)]
-    (loop [starts [0]]
-      (if (.find m)
-        (recur (conj starts (.end m)))
-        starts))))
+  (let [m (re-matcher #"\r?\n" s)
+        nl #(if (.find m) (.end m))]
+    (into [0] (take-while identity (repeatedly nl)))))
 
 (defn offset-from-line-column
   "Get the offset into the string from the line/column position, using
