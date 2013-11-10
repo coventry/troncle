@@ -1,3 +1,5 @@
+(remove-ns 'troncle.core-test)
+
 (ns troncle.core-test
   (:require [clojure.test :refer :all]
             [troncle.core :refer :all]
@@ -15,6 +17,8 @@
 (def split-lines (s/split-lines test-string))
 (def pos (line-starts test-string))
 
+(def test-form (parse-tree test-string))
+
 (defn line-column-from-offset
   "Get the line/column position from offset into the string."
   ([offset linestarts]
@@ -24,14 +28,14 @@
            (last (take-while #(<= (% 1) offset)
                              (map-indexed vector
                                           (drop startidx linestarts))))]
-       [(+ startidx linenum) (- offset soffset)])))
+       [(+ startidx linenum 1) (- offset soffset -1)])))
 
 (deftest line-column-calculation
   (testing "Line/column conversion works"
     (doseq [[offset ch] (map-indexed vector test-string)
             :when (not (#{\newline \return} ch))            
             :let [[line col] (line-column-from-offset offset pos)
-                  sch (nth (nth split-lines line) col)]]
+                  sch (nth (nth split-lines (- line 1)) (- col 1))]]
       (is (= ch sch)))))
 
 (deftest line-starts-smoke-test
@@ -45,5 +49,13 @@
             :let [[line col] (line-column-from-offset offset pos)]]
       (is (= offset (offset-from-line-column line col pos))))))
 
+(deftest find-contained-forms
+  (testing "Can we find the forms between two offsets"
+    (let [cf (first (mark-contained-forms pos 5 50 test-form))
+          defn (first cf) capitalize (second cf)]
+      (is ((meta capitalize) :troncle.core/wrap))
+      (is (not ((meta defn) :troncle.core/wrap))))))
+
+(user/starbreak)
 (run-tests)
 

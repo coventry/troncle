@@ -27,10 +27,10 @@
   "Get the offset into the string from the line/column position, using
   the positions computed in line-starts"
   [line column linestarts]
-  (+ (linestarts line) column))
+  (+ (linestarts (- line 1)) (- column 1)))
 
 (defn in-region? [linestarts start end f]
-  (let [m (or (meta f) (constantly 0)) ; If no metadata assume offset 0
+  (let [m (or (meta f) (constantly 1)) ; If no metadata assume offset 0
         sl (m :line) sc (m :column) el (m :end-line) ec (m :end-column)]
     (if (not ((set [sl sc el ec]) nil)) ; Meta data is present
       (let [so (offset-from-line-column sl sc linestarts)
@@ -41,11 +41,12 @@
   "Given forms fs, a list of the offsets for each new line in
   linestarts, and offsets start and end, decorate each form in fs
   which lay between start end end with ^{:wrap true}"
-  (w/walk (partial mark-contained-forms linestarts start end)
-          (t/trace-fn #(if (in-region? linestarts start end %)
-                         (vary-meta % conj {:wrap true})
-                         :no-hit))
-          fs))
+  (w/postwalk #(if (in-region? linestarts start end %)
+                 (vary-meta % conj {::wrap true})
+                 %)
+              fs))
+
+(user/starbreak)
 
 (let [f (parse-tree u/test-strings)
       l (line-starts u/test-strings)

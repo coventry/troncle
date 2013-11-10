@@ -5,6 +5,7 @@
 
 (defn pprint [& args] (apply pp/pprint args))
 (defn trace [& args] (apply t/trace args))
+(def deftrace #'t/deftrace)
 
 (def test-strings "(defn ^String capitalize
   [^CharSequence s]
