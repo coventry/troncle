@@ -4,5 +4,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [tools.reader "0.8.0-SNAPSHOT"]])
+                 [nrepl-discover "0.0.0"]
+                 [tools.reader "0.8.0-SNAPSHOT"]]
+  :repl-options {:nrepl-middleware [nrepl.discover/wrap-discover]})
 
