@@ -30,6 +30,10 @@
   (+ (linestarts (- line 1)) (- column 1)))
 
 (defn in-region? [linestarts start end f]
+  "Given linestarts a list of offsets for each new line in the source
+  string, a region in the string marked by start and end, and f a
+  subform taken from the read of the source string, test whether f's
+  metadata lay in the specified region."
   (let [m (or (meta f) (constantly 1)) ; If no metadata assume offset 0
         sl (m :line) sc (m :column) el (m :end-line) ec (m :end-column)]
     (if (not ((set [sl sc el ec]) nil)) ; Meta data is present
