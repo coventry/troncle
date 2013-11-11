@@ -79,12 +79,12 @@
 
 (defn maybe-wrap [trace-wrap]
   (fn [f ft]
-    (if (-> f meta ::wrap) (trace-wrap ft) ft)))
+    (if (-> f meta ::wrap) (trace-wrap f ft) ft)))
 
 (defn trace-marked-forms [trace-wrap f ns]
   "Evaluate f in the given ns, with any subforms marked with ^{::wrap
   true} wrapped by the trace-wrap fn."
-  (let [tw (assign-var (maybe-wrap trace-wrap))]
+  (let [tw (assign-var 'trace-wrap (maybe-wrap trace-wrap))]
     (binding [*ns* ns]
       (eval `(wm/wrap-form never identity ~tw ~f)))))
 
