@@ -70,7 +70,6 @@
 
 (defn maybe-wrap [trace-wrap]
   (fn [f ft]
-    ;; (u/pprint [f ft (meta f)])
     (if (-> f meta ::wrap) (trace-wrap ft) ft)))
 
 (defn trace-marked-forms [trace-wrap f ns]
