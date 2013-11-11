@@ -57,5 +57,11 @@
       (is (not ((meta defn) :troncle.core/wrap))))))
 
 (user/starbreak)
-(run-tests)
+#_(run-tests)
 
+(user/starbreak)
+(ns-unmap *ns* 'capitalize)
+(trace-marked-forms #(list 'w %)
+                    (->> test-form (mark-contained-forms pos 5 100) first)
+                    *ns*)
+(println (capitalize "foo"))

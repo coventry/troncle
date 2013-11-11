@@ -1,10 +1,12 @@
 (ns troncle.core
   (:require [troncle.tools.reader :as r]
-            [clojure.tools.reader.reader-types :as rt]
-            [troncle.util :as u]
-            [clojure.walk2 :as w]
             [troncle.traces :as t]
-            [troncle.wrap]))
+            [troncle.wrap-macro :as wm]
+            [troncle.util :as u]
+            [clojure.tools.reader.reader-types :as rt]
+            [clojure.walk2 :as w]))
+
+(require '[troncle.wrap-macro :as wm] :reload)
 
 (defn parse-tree [s]
   "Return the location-decorated parse tree of s"
@@ -14,6 +16,10 @@
         eof (->> #(gensym "parser-eof__") repeatedly
                  (remove #(.contains s (str %))) first)]
     (take-while #(not (= eof %)) (repeatedly #(r/read reader nil eof)))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Identification of forms to trace
 
 (defn line-starts [s]
   "Returns the offset in s of the start of each new line"
@@ -42,9 +48,35 @@
 (defn mark-contained-forms [linestarts start end fs]
   "Given forms fs, a list of the offsets for each new line in
   linestarts, and offsets start and end, decorate each form in fs
-  which lay between start end end with ^{:wrap true}"
+  which lie between start end end with ^{:wrap true}"
   (w/postwalk #(if (in-region? linestarts start end %)
                  (vary-meta % conj {::wrap true})
                  %)
               fs))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Tracing/wrapping logic
+
+;; wm/wrap-form needs to reference fns as var symbols.
+(defonce dummy-ns (create-ns (gensym))) ;; Keep the vars here
+(defn assign-var [v]
+  "Return a fully-qualified symbol of a var assigned to value v"
+  (let [s (gensym)]
+    (intern dummy-ns s v)
+    (symbol (-> dummy-ns ns-name str) (str s))))
+
+(def never (constantly false))
+
+(defn maybe-wrap [trace-wrap]
+  (fn [f ft]
+    ;; (u/pprint [f ft (meta f)])
+    (if (-> f meta ::wrap) (trace-wrap ft) ft)))
+
+(defn trace-marked-forms [trace-wrap f ns]
+  "Evaluate f in the given ns, with any subforms marked with ^{::wrap
+  true} wrapped by the trace-wrap fn."
+  (let [tw (assign-var (maybe-wrap trace-wrap))]
+    (binding [*ns* ns]
+      (eval `(wm/wrap-form never identity ~tw ~f)))))
 
