@@ -65,11 +65,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tracing/wrapping logic
 
-;; wm/wrap-form needs to reference fns as var symbols.
+;; Becase it's a recursing macro, wm/wrap-form needs to reference fns
+;; as var symbols.
 (defonce dummy-ns (create-ns (gensym))) ;; Keep the vars here
-(defn assign-var [v]
+(defn assign-var 
   "Return a fully-qualified symbol of a var assigned to value v"
-  (let [s (gensym)]
+  [name v]
+  (let [s (gensym name)]
     (intern dummy-ns s v)
     (symbol (-> dummy-ns ns-name str) (str s))))
 
