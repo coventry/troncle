@@ -171,6 +171,13 @@ This is ideally going through nrepl-discover.  It is going to want to
 know the current ns.  [[file:~/dotfiles/elisp/emacs.d/elpa/nrepl-20130829.156/nrepl.el::(defun%20nrepl-interactive-eval%20(form)][nrepl-interactive-eval]] does this by  passing
 (nrepl-current-ns).  I probably want to do the same.
 
+** Packaging this
+
+What is the right way to get my hands on nrepl-discover.el?  Should I
+just put a copy in the local directory?  Might as well, hmm?
+Instructions need to say "put these TWO files somewhere emacs can find
+them.  It's just a prototype at this stage, anyway.
+
 * Todo
 
 Extend tools.reader to thread the dispatch maps through the function
