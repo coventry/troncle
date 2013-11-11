@@ -7,8 +7,6 @@
             [clojure.walk2 :as w]
             [nrepl.discover :as d]))
 
-(require '[troncle.wrap-macro :as wm] :reload)
-
 (defn parse-tree 
   "Return the location-decorated parse tree of s"
   [s]
