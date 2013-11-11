@@ -23,8 +23,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Identification of forms to trace
 
-(defn line-starts [s]
+(defn line-starts 
   "Returns the offset in s of the start of each new line"
+  [s]
   (let [m (re-matcher #"\r?\n" s)
         nl #(if (.find m) (.end m))]
     (into [0] (take-while identity (repeatedly nl)))))
@@ -35,11 +36,12 @@
   [line column linestarts]
   (+ (linestarts (- line 1)) (- column 1)))
 
-(defn in-region? [linestarts start end f]
+(defn in-region? 
   "Given linestarts a list of offsets for each new line in the source
   string, a region in the string marked by start and end, and f a
   subform taken from the read of the source string, test whether f's
   metadata lay in the specified region."
+  [linestarts start end f]
   (let [m (or (meta f) (constantly 1)) ; If no metadata assume offset 0
         sl (m :line) sc (m :column) el (m :end-line) ec (m :end-column)]
     (if (not ((set [sl sc el ec]) nil)) ; Meta data is present
@@ -52,10 +54,11 @@
     (vary-meta f conj {::wrap true})
     f))
 
-(defn mark-contained-forms [linestarts start end fs]
+(defn mark-contained-forms 
   "Given forms fs, a list of the offsets for each new line in
   linestarts, and offsets start and end, decorate each form in fs
   which lie between start end end with ^{:wrap true}"
+  [linestarts start end fs]
   (u/postwalk (partial maybe-mark-form linestarts start end) fs))
 
 

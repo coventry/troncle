@@ -24,8 +24,9 @@
           vec)
     ~@(map wrapper body)))
 
-(defn wrap-method [wrapper [methodname args & body]]
+(defn wrap-method 
   "Wrap a method from a deftype*-style declaration"
+  [wrapper [methodname args & body]]
   `(~ methodname ~args ~@(map wrapper body)))
 
 (defn wrap-deftype* [wrapper
@@ -43,8 +44,9 @@
   `(~invocation ~interfaces
                 ~@(map (partial wrap-method wrapper) methods)))
 
-(defn wrap-ignore-elements [wrapper form numignore]
+(defn wrap-ignore-elements 
   "Wrap everything but the first numignore elements of form"
+  [wrapper form numignore]
   (let [notwrapped (+ 1 numignore)] ; Exclude special-form symbol
     (concat (take notwrapped form)
             (map wrapper (drop notwrapped form)))))
