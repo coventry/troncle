@@ -1,0 +1,184 @@
+This was copied from [[file:~/clojure/projects/debugger/tracing-with-nrepl-discover/00README.org][here]]... moved it because it needs its own git
+repository.
+
+Want to make a tracing function which uses [[file:~/clojure/projects/debugger/alien/nrepl-discover/Proposal.md::#%20nREPL%20Self-describing%20Op%20Proposal][nrepl-discover]].
+
+* How it should work, the user perspective
+
+Just ignoring implementation issues for now.  How would I really like
+this to work?
+
+Would want to bind different execution environments to different
+invocation keys.  I.e., I run this, and this test, perhaps in a
+different ns, gets run.  Tracing happens when specified conditions are
+met.  Can easily change the environment associated with a key.
+
+There is a binding which takes one of these invocation keys and invokes
+it.  Another for reporting/editing the environment associated with it.
+
+Tracing data should go into a clojure data structure, as well, with a
+handy way of reaching it from the repl.  There should be an option to
+turn off the stdout output of it.
+
+The clunky part of this at the moment is the editing of the execution
+environment.  How to specify the namespace/function to run?  How to
+specify the tracing condition?  How to specify the variable to store the
+trace data in?  Or maybe how to access it from the repl?  Maybe put
+them in a dbg namespace?  Like dbg/t?
+
+There needs to be a fast way and a slow way of doing these things.
+Slow way: open up a customization dialog which shows all the options.
+
+Fast way: A specific binding for setting each, which takes the
+execution environment binding and runs it.
+
+I am going to just do the fast way for now.  Simpler, and I think most
+people will get it.  C-c t will be the prefix.  
+
+|---------------+-------------------------------------------------------------|
+| C-c t n <key> | bind <key> to a new execution environment.  If region is    |
+|               | active, that becomes the forms to trace.  Otherwise, just   |
+|               | inject locals report at point.                              |
+|---------------+-------------------------------------------------------------|
+| C-c t f <key> | ask for the command to run when it's called.  By default,   |
+|               | it will load the current ns, a la C-c C-k.  If a bare var   |
+|               | is passed, it will be treated as a function.  If a list,    |
+|               | the list will be treated as a function call.                |
+|---------------+-------------------------------------------------------------|
+| C-c t N <key> | will set the ns to that of the current buffer.  With        |
+|               | prefix arg, it will ask for the ns to set it to.            |
+|---------------+-------------------------------------------------------------|
+| C-c t c <key> | set the tracing condition.  Injected into the current       |
+|               | context.                                                    |
+|---------------+-------------------------------------------------------------|
+| C-c t o <key> | toggle whether output is sent to the repl or not            |
+|---------------+-------------------------------------------------------------|
+| C-c t d <key> | show the var the tracing output is being dumped to          |
+|---------------+-------------------------------------------------------------|
+| C-c t r <key> | report all the data associated with this execution          |
+|               | environment.  Allow it to be edited, too.                   |
+|---------------+-------------------------------------------------------------|
+| C-c t m <key> | Set the forms which the tracing/debugging apply to.         |
+|               | This should be paredit-style, but since I only want to      |
+|               | paint parts of the tree, just use arrow keys: up means      |
+|               | the containing form, down means the setting prior to the    |
+|               | last up, or nothing, left and right mean the forms in those |
+|               | directions. See up-list et al. in lisp.el.                  |
+|---------------+-------------------------------------------------------------|
+| C-c t M <key> | Add trace to all forms touched by the currently marked      |
+|               | region.  Error if region is not active.                     |
+|---------------+-------------------------------------------------------------|
+| C-c t F <key> | Assume form under point is a function, and trace its inputs |
+|               | and outputs.                                                |
+|---------------+-------------------------------------------------------------|
+| C-c t l <key> | Go up the tree to find the first let form, and trace its    |
+|               | definitions.                                                |
+|---------------+-------------------------------------------------------------|
+
+When the tracing condition causes an exception, that should be reported
+wrapped, because it won't show up in the code.  Ideally, a message
+should be sent back to emacs which can report it specially.
+
+The traces should contain timestamps and all info about the forms being
+traced, condition for tracing, etc.
+
+* Roadmap
+
+First stage: Take the current point, and report the values of the
+locals at that point.
+
+Next stage: Take all forms in the region, and instrument them to return
+their values.
+
+Next stage: Take all forms in the region, and instrument them to drop
+to a debugging repl, step between them, etc.
+
+* Implementation
+
+For a straight report of locals, how should I decide where to inject
+the report?  The user could have point in a quoted list or something,
+for instance.
+
+The rule should be that if point is on a parenthesis, the form
+containing that which is actually evaluated should be wrapped.  If the
+point is on or next to a symbol, the evaluated form containing that
+should be wrapped.
+
+I guess I could do the same macro wrapping trick as before, and pass
+information up the chain using metadata on the forms??
+
+Can get the top-level form with nrepl-region-for-expression-at-point.
+Returns start and end positions in a list.
+
+Perhaps the problem here is that I am trying to do too much work which
+ought to be done by the user?
+
+I'm going to punt on this, for now.  I'm going to require the user to
+specify the form to wrap, wrap it with a macro which reports when it's
+been run, and throw an error if the macro doesn't run.
+
+Still need to determine how many forms are in that section, but I guess
+I could do that in the clojure macro I wrap the whole thing in.
+
+** Keeping track of different execution environments
+
+This is going to be tricky: The positions are going to be moving around.
+Emacs has data structure for keeping track of this, [[info:elisp#Markers][markers]].
+
+So I need a way to 
+
+** Tracing datastructure
+
+This needs to be a ref of some variety.  Probably needs to be accessed
+through an agent, since I really need to pipeline 
+
+I guess I am going to have to specify the [[info:elisp#Marker%20Insertion%20Types][marker insertion type]], but I
+am not sure whether the pointer should move to the start or end of
+inserted text.
+
+** Code structure
+
+nrepl-discover passes the top-level defun, the current namespace, the
+region which the user wants traced.  The clojure side inserts a macro
+around that.  It is the user's responsibility to get the positions of
+the region right, for now.
+
+The clojure code uses the LCA method to identify portions of the
+macroexpanded code which come from the region.
+
+So, first thing I need is a reader which just reads.  That means turning
+off the syntax quote in clojure.tools.reader/macros and
+clojure.tools.reader/read-ctor.
+
+Then, I need to use the earlier code to map the macroexpanded form back
+to the target region.  Actually, there is a better way: post-traversal
+combination of the range containing symbols below each node.  That way,
+I can figure out exactly which forms need to be wrapped.  Awesome.  I
+can probably
+
+Once I've figured out which forms to wrap (indicated in the metadata by
+{::wrap true}), I can just use the previous wrapping code.  To start
+with, I should probably just trace it, with the form as the name.  
+
+The way the tracing should work is, I have a recursive macro like
+before.  This time, if the form has ^{::wrap true}, I should wrap the
+form in (trace form form).  Let's start  there.  I probably want my own
+trace function, but maybe I can overwrite trace/tracer for this.
+
+** Communication with emacs
+
+This is ideally going through nrepl-discover.  It is going to want to
+know the current ns.  [[file:~/dotfiles/elisp/emacs.d/elpa/nrepl-20130829.156/nrepl.el::(defun%20nrepl-interactive-eval%20(form)][nrepl-interactive-eval]] does this by  passing
+(nrepl-current-ns).  I probably want to do the same.
+
+* Todo
+
+Extend tools.reader to thread the dispatch maps through the function
+calls, so that they can be changed in a thread-safe way.  (User code may
+be using tools.reader.  This argues for putting a copy of tools.reader
+in a subordinate ns so that that can't happen, actually.  
+ 
+Given the dependency diagram for tools.reader, I think I can just take
+a copy of reader.clj, and leave the rest as-is.  [[http://git-scm.com/book/ch6-7.html][This]] might have a way
+to pull reader.clj in and still allow me to track changes to it.  I
+will do that later, though.
