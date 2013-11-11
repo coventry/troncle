@@ -1,15 +1,17 @@
 (ns troncle.core
-  (:require [troncle.tools.reader :as r]
+  (:require [clojure.tools.reader :as r]
             [troncle.traces :as t]
             [troncle.wrap-macro :as wm]
             [troncle.util :as u]
             [clojure.tools.reader.reader-types :as rt]
-            [clojure.walk2 :as w]))
+            [clojure.walk2 :as w]
+            [nrepl.discover :as d]))
 
 (require '[troncle.wrap-macro :as wm] :reload)
 
-(defn parse-tree [s]
+(defn parse-tree 
   "Return the location-decorated parse tree of s"
+  [s]
   (let [reader (rt/indexing-push-back-reader s)
         ;; EOF sentinel for r/read.  Make sure it's not in the string
         ;; to be parsed.
