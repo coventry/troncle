@@ -45,14 +45,16 @@
             eo (offset-from-line-column el ec linestarts)]
         (<= start so eo end)))))
 
+(defn maybe-mark-form [linestarts start end f]
+  (if (in-region? linestarts start end f)
+    (vary-meta f conj {::wrap true})
+    f))
+
 (defn mark-contained-forms [linestarts start end fs]
   "Given forms fs, a list of the offsets for each new line in
   linestarts, and offsets start and end, decorate each form in fs
   which lie between start end end with ^{:wrap true}"
-  (w/postwalk #(if (in-region? linestarts start end %)
-                 (vary-meta % conj {::wrap true})
-                 %)
-              fs))
+  (u/postwalk (partial maybe-mark-form linestarts start end) fs))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
