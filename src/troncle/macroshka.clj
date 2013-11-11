@@ -1,4 +1,4 @@
-(ns troncle.wrap-macro
+(ns troncle.macroshka
   "Inside-out macro: wrap evaluable forms at the top level of the
   current form in a macro which wraps the evaluable forms at the next
   level down."

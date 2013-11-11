@@ -1,7 +1,7 @@
 (ns troncle.core
   (:require [clojure.tools.reader :as r]
             [troncle.traces :as t]
-            [troncle.wrap-macro :as wm]
+            [troncle.macroshka :as wm]
             [troncle.util :as u]
             [clojure.tools.reader.reader-types :as rt]
             [clojure.walk2 :as w]
