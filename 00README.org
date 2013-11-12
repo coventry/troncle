@@ -191,3 +191,8 @@ Given the dependency diagram for tools.reader, I think I can just take
 a copy of reader.clj, and leave the rest as-is.  [[http://git-scm.com/book/ch6-7.html][This]] might have a way
 to pull reader.clj in and still allow me to track changes to it.  I
 will do that later, though.
+
+** Debugger
+
+Note that there is nrepl-send-request-sync for synchronous
+communication with the server.
