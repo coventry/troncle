@@ -18,15 +18,11 @@
   (binding [*read-eval* nil]
     (read-string s)))
 
-(def a (atom nil))
-
 (defn trace-region
   "Eval source, taken from source-region instrumenting all forms
   contained in trace-region with tracing"
   [{:keys [transport source source-region trace-region ns] :as msg}
    ]
-  (user/starbreak)
-  (swap! a (constantly msg))
   (let [source-region (safe-read source-region)
         trace-region (safe-read trace-region)
         soffset (nth source-region 1)
@@ -34,7 +30,6 @@
         tracer #(list 'clojure.tools.trace/trace
                       (pr-str ((juxt :line :column) (meta %1)) %1) %2)
         ns (-> ns symbol the-ns)]
-    (swap! a (constantly [source tstart tend ns tracer]))
     (try (c/trace-marked-forms source tstart tend ns tracer)
          (@traces/trace-execution-function)
          (catch Throwable e
