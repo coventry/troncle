@@ -35,6 +35,7 @@
          (catch Throwable e
            (clojure.repl/pst e)))))
 
+;; Add the nrepl-discover metadata
 (let [m (meta #'trace-region)
       opmap {:nrepl/op {:name (-> m :name str) :doc (m :doc)
                         :args [["source"        "string"]
