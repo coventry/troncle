@@ -78,10 +78,24 @@
   (fn [f ft]
     (if (-> f meta ::wrap) (trace-wrap f ft) ft)))
 
-(defn trace-marked-forms
+(defn trace-marked-form*
   "Evaluate f in the given ns, with any subforms marked with ^{::wrap
-  true} wrapped by the trace-wrap fn."
+  true} wrapped by the fn pointed to by the trace-wrap var."
    [trace-wrap f ns]
-  (let [tw (assign-var 'trace-wrap (maybe-wrap trace-wrap))]
-    (binding [*ns* ns]
-      (eval `(wm/wrap-form never identity ~tw ~f)))))
+   (binding [*ns* ns]
+     (eval `(wm/wrap-form never identity ~trace-wrap ~f))))
+
+(defn trace-marked-forms
+  "Read and evaluate each top-level form in source in the given ns.
+  Instrument any subforms between offsets start and end with tracing
+  using trace-wrap."
+  [source start end ns trace-wrap]
+  (let [ls (line-starts source)
+        tw (assign-var 'trace-wrap (maybe-wrap trace-wrap))]
+    ;; Must (read) and (eval) top-level forms in lockstep, because
+    ;; evaluation of earlier forms can establish context for reading
+    ;; later forms.  (E.g., tagged literals)
+    (doseq [form (parse-tree source)
+            :let [mf  (mark-contained-forms ls start end form)]]
+      (trace-marked-form* tw mf ns))))
+
