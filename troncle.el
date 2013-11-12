@@ -20,5 +20,7 @@
 			   "trace-region" (str (list fn rstart rend)))
 		     (nrepl-discover-op-handler (current-buffer))))))
 
+(define-key clojure-mode-map (kbd "C-c t R") 'troncle-trace-region)
+
 (provide 'troncle)
 
