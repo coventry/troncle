@@ -21,8 +21,7 @@
 (defn trace-region
   "Eval source, taken from source-region instrumenting all forms
   contained in trace-region with tracing"
-  [{:keys [transport source source-region trace-region ns] :as msg}
-   ]
+  [{:keys [transport source source-region trace-region ns] :as msg}]
   (let [source-region (safe-read source-region)
         trace-region (safe-read trace-region)
         soffset (nth source-region 1)
@@ -42,3 +41,5 @@
                                ["source-region" "region"]
                                ["trace-region" "region"]]}}]
   (alter-meta! #'trace-region conj opmap))
+
+
