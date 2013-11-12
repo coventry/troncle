@@ -3,6 +3,7 @@
 (ns troncle.core-test
   (:require [clojure.test :refer :all]
             [troncle.core :refer :all]
+            [troncle.traces :as t]
             [clojure.string :as s]))
 
 (def test-string "(defn ^String capitalize
@@ -57,11 +58,21 @@
       (is (not ((meta defn) :troncle.core/wrap))))))
 
 (user/starbreak)
-#_(run-tests)
+(run-tests)
 
-(user/starbreak)
-(ns-unmap *ns* 'capitalize)
-(trace-marked-forms #(list 'w %)
-                    (->> test-form (mark-contained-forms pos 5 100) first)
-                    *ns*)
-(println (capitalize "foo"))
+;; (defonce myns-sym (gensym))
+(def myns-sym 'troncle.tst)
+(def myns (create-ns myns-sym))
+(binding [*ns* myns]
+  (clojure.core/refer-clojure))
+(ns-unmap myns 'capitalize)
+
+(trace-marked-forms
+ test-string 5 100 myns
+ #(list 'clojure.tools.trace/trace
+                           (pr-str ((juxt :line :column) (meta %1)) %1) %2))
+(binding [*ns* myns]
+  (user/starbreak)
+  (println (capitalize "foo")))
+
+(println ((ns-resolve myns-sym 'capitalize) "foo"))
