@@ -6,6 +6,6 @@
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [nrepl-discover "0.1.0"]
                  [org.clojure/tools.reader "0.7.10"]
-                 [com.stuartsierra/clojure.walk2 "0.1.0-SNAPSHOT"]]
+                 [caribou/clojure.walk2 "0.1.0"]]
   :repl-options {:nrepl-middleware [nrepl.discover/wrap-discover]})
 
