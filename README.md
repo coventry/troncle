@@ -68,7 +68,7 @@ are traced, because those are the only forms in the selected region.
 
 ## Installation
 
-For now, this is very manual.
+Since I've never deployed a jar before, for now this is very manual.
 
 0. In the shell, `git clone https://github.com/coventry/troncle.git`
 
@@ -80,12 +80,16 @@ For now, this is very manual.
    ```clojure
    :repl-options {:nrepl-middleware [nrepl.discover/wrap-discover]}
    ```
-   
-  (see [project.clj](/project.clj) for an example.)  Or add this to your
-  `:user` map in your `~/.lein/profiles.clj`.
 
-3. If you haven't already done so, `M-x nrepl-jack-in` in your target
-   project.
+   Also add `[nrepl-discover "0.1.0"]` to your project.clj's
+   `:dependencies` vector.
+   
+  (See troncle's [project.clj](/project.clj) for an example.)  Or add
+  these modifications to your `:user` map in your
+  `~/.lein/profiles.clj`.
+
+3. `M-x nrepl-jack-in` in your target project.  (Restart the jvm if
+   necessary, to get the nrepl-discover middleware operating.)
 
 5. In emacs, open the resulting `troncle.el` then `M-x eval-buffer`
 
