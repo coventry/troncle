@@ -1,6 +1,11 @@
 (require 'clojure-mode)
+(require 'nrepl)
 (require 'nrepl-discover)
 
+;; These need to be synchronous so we know troncle.emacs/trace-region
+;; is available when nrepl-discover runs.
+(nrepl-send-string-sync "(require 'troncle.emacs)" "user")
+(nrepl-send-string-sync "(require 'nrepl.discover)" "user")
 (nrepl-discover)
 
 (defun str (&rest vals) (mapconcat (lambda (v) (pp-to-string v)) vals " "))
@@ -19,10 +24,6 @@
 			   "source-region" (str (cons fn defun-region))
 			   "trace-region" (str (list fn rstart rend)))
 		     (nrepl-discover-op-handler (current-buffer))))))
-
-(nrepl-interactive-eval "(require 'troncle.emacs)")
-(nrepl-interactive-eval "(require 'nrepl.discover)")
-(nrepl-discover)
 
 (define-key clojure-mode-map (kbd "C-c t R") 'troncle-trace-region)
 
