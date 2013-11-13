@@ -1,7 +1,9 @@
 # troncle
 
 Troncle is a proof-of-concept integration of clojure's tracing tools
-with emacs.
+with emacs, built around technomancy's innovative nrepl-discover and
+a robust (very simple) code-walking/wrapping macro I've developed.
+
 
 `clojure.tools.trace` is super-handy, but wrapping various forms in your
 code with `(ctt/trace ...)` as you explore how it's working gets
