@@ -3,6 +3,7 @@
 (ns troncle.core-test
   (:require [clojure.test :refer :all]
             [troncle.core :refer :all]
+            [troncle.util :as u]
             [troncle.traces :as t]
             [clojure.string :as s]))
 
@@ -57,7 +58,7 @@
       (is ((meta capitalize) :troncle.core/wrap))
       (is (not ((meta defn) :troncle.core/wrap))))))
 
-(user/starbreak)
+(u/starbreak)
 (run-tests)
 
 ;; (defonce myns-sym (gensym))

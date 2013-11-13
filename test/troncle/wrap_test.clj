@@ -3,6 +3,7 @@
   (:require [troncle.wrap :refer :all]
             [troncle.wrap.special-form-info :refer :all]
             [troncle.wrap.wrappers :refer :all]
+            [troncle.util :as u]
             [clojure.tools.trace :as trace]
             [clojure.set :as set]
             [clojure.test :refer :all]))
@@ -104,5 +105,5 @@
   (wrapper= '(try   (apply f args)  (finally    (pop-thread-bindings)))
             '(try (w (apply f args)) (finally (w (pop-thread-bindings))))))
 
-(user/starbreak)
+(u/starbreak)
 (run-tests)

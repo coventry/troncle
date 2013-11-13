@@ -27,3 +27,5 @@
     (outer (if fm (with-meta i fm) i))))
 (defn postwalk [f form] (walk (partial postwalk f) f form))
 
+(defn starbreak []
+  (println "************************************************************************"))
