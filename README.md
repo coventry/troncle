@@ -73,7 +73,8 @@ For now this is very manual.
 0. In the shell, `git clone https://github.com/coventry/troncle.git`
 
 1. In emacs, open `nrepl-discover.el` in the troncle repository and run
-   `M-x eval-buffer`.  (At the time I'm writing this the nrepl-discover
+   `M-x eval-buffer`.  (At the time I'm writing this the
+   [nrepl-discover](https://github.com/technomancy/nrepl-discover)
    marmalade package is out of date and incompatible with troncle.)
 
 2. In the `project.clj` file for the lein project where you want to use
@@ -100,6 +101,51 @@ For now this is very manual.
 
 8. Go to the buffer with the code you want to explore, compile it with
    `C-c C-k`, mark the forms you want traced, and hit `C-c t R`!
+
+## Roadmap
+
+
+### Extended functionality
+
+This is a very simple application at the moment, but I think it has a
+lot of potential.  The core functionality is in `troncle.macroshka`,
+which is a very robust code-walking scheme.  (I've run it over the
+entire clojure source code.)
+
+These are the directions I'd like to move it in:
+
+1. Emacs convenience functions for passing "load this file" and "run
+   this test" functions to `tronce.traces/st`.
+
+2. Tracing instrumentation for multiple regions within a top-level
+   form. 
+
+3. Filtered tracing: Only report a trace when a given predicate returns
+   true.  Predicate can be specified in terms of return values of the
+   forms under consideration.
+
+4. Save and restore current tracing configuration.
+
+5. Tracing of bindings to local variables.
+
+6. Send trace reports to a clojure list, rather than/as well as the
+   repl, so that they can be queried programmatically.
+
+7. Replay a series of trace reports using emacs overlays
+   (nrepl-discover's overlay facility should make this easy.)
+
+8. Replace the tracing with source-level step debugging.
+
+## Cleaning up
+
+1. Currently this depends on private (bleeding-edge) copies of
+   `nrepl-discover.el` and `clojure.tools.reader`.  These need to be
+   changed to canonical dependencies as they become available.
+   
+2. A lot of troncle.el's behaviors may be more generally useful to other
+   users of nrepl-discover.el.
+
+3. You tell me.
 
 ## License
 
