@@ -47,22 +47,17 @@
       (is ((meta capitalize) :troncle.core/wrap))
       (is (not ((meta defn) :troncle.core/wrap))))))
 
-(u/starbreak)
-(run-tests)
-
 ;; (defonce myns-sym (gensym))
 (def myns-sym 'troncle.tst)
 (def myns (create-ns myns-sym))
 (binding [*ns* myns]
   (clojure.core/refer-clojure))
-(ns-unmap myns 'capitalize)
 
+(ns-unmap myns 'capitalize)
 (swap! troncle.traces/trace-execution-function
        (constantly #(println ((ns-resolve myns-sym 'capitalize) "foo"))))
-
 (trace-marked-forms
  test-string 5 100 myns
  #(list 'clojure.tools.trace/trace
-                           (pr-str ((juxt :line :column) (meta %1)) %1) %2))
-
+        (pr-str ((juxt :line :column) (meta %1)) %1) %2))
 (@troncle.traces/trace-execution-function)

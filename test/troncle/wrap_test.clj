@@ -105,5 +105,3 @@
   (wrapper= '(try   (apply f args)  (finally    (pop-thread-bindings)))
             '(try (w (apply f args)) (finally (w (pop-thread-bindings))))))
 
-(u/starbreak)
-(run-tests)
