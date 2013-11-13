@@ -40,3 +40,8 @@
   "Function which is run when the trace is requested"
   (atom (constantly nil)))
 
+(defn st
+  "Set the function which is executed when troncle-trace-region is
+  called."
+  [fn]
+  (swap! trace-execution-function (constantly fn)))
