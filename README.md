@@ -12,7 +12,9 @@ This is a very rough first cut, which I've published mostly because I'm
 hoping to talk to people at the Clojure Conj about what directions to
 take it in.  If this seems like an interesting project to you, please
 take a look at the [roadmap](#roadmap) and let me know what you think.
-(Whether you're at the Conj or not, of course.)
+(Whether you're at the Conj or not, of course.)  If it seems useless or
+otherwise misguided, please also let me know what you think. :-) All
+feedback is welcome.
 
 ## Usage
 
@@ -25,7 +27,7 @@ their evaluation during execution are reported in the repl buffer.
 
 In order to do this, you have to let troncle know how to execute the
 code.  You do this using the atom
-`tronce.traces/trace-execution-function`.
+`troncle.traces/trace-execution-function`.
 
 For instance, suppose that you have the following code in `tst.clj`:
 
@@ -41,16 +43,64 @@ For instance, suppose that you have the following code in `tst.clj`:
            (.toLowerCase (subs s 1))))))
 ```
 
-After [installing](#installation) troncle, type the following to tell
-troncle how you want to test this function:
+After [installing](#installation) troncle and compiling this file with
+`C-c C-k`, type the following into the nrepl buffer to tell troncle how
+you want to test this function:
+
+```clojure
+user> (troncle.traces/st #(println (troncle.tst/capitalize "foo")))
+```
+
+Now go to the tst.clj buffer,  and select all the text from just after
+`defn` to just below the `if` symbol.  Type `C-c t R`, and the following
+should appear in the nrepl buffer:
+
+```clojure
+TRACE [4 11] (.toString s): "foo"
+TRACE [5 12] (count s): 3
+TRACE [5 9] (< (count s) 2): false
+Foo
+```
+
+`[4 11]` gives the line/column position of the form `(.toString s) in
+the buffer.  `"foo"` is the result of its evaluation.  Only three forms
+are traced, because those are the only forms in the selected region.
 
 ## Installation
 
-Foo
+For now, this is very manual.
+
+0. In the shell, `git clone https://github.com/coventry/troncle.git`
+
+1. In emacs, `M-x package-install RET nrepl-discover RET`
+
+2. In the `project.clj` file for the lein project where you want to use
+   troncle, add
+
+   ```clojure
+   :repl-options {:nrepl-middleware [nrepl.discover/wrap-discover]}
+   ```
+   
+  (see [project.clj](/project.clj) for an example.)  Or add this to your
+  `:user` map in your `~/.lein/profiles.clj`.
+
+3. If you haven't already done so, `M-x nrepl-jack-in` in your target
+   project.
+
+5. In emacs, open the resulting `troncle.el` then `M-x eval-buffer`
+
+6. Open `src/troncle/core.clj` and hit `C-c C-k` while there to compile
+   it.	
+
+7. In the nrepl buffer, set the command to be executed by troncle using
+   `tronce.traces/st` (see [Usage](usage) for an example.)
+
+8. Go to the buffer with the code you want to explore, compile it with
+   `C-c C-k`, mark the forms you want traced, and hit `C-c t R`!
 
 ## License
 
-Copyright © 2013 FIXME
+Copyright © 2013 Alex Coventry
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
