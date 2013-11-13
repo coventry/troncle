@@ -4,7 +4,7 @@
             [troncle.macroshka :as wm]
             [troncle.util :as u]
             [clojure.tools.reader.reader-types :as rt]
-            [clojure.walk2 :as w]))
+            [clojure.walk :as w]))
 
 (defn parse-tree 
   "Return the location-decorated parse tree of s"
