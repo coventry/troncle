@@ -20,7 +20,7 @@
 			   "trace-region" (str (list fn rstart rend)))
 		     (nrepl-discover-op-handler (current-buffer))))))
 
-(nrepl-interactive-eval "(require 'troncle.core)")
+(nrepl-interactive-eval "(require 'troncle.emacs)")
 (nrepl-interactive-eval "(require 'nrepl.discover)")
 (nrepl-discover)
 
