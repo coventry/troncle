@@ -21,6 +21,8 @@
 		     (nrepl-discover-op-handler (current-buffer))))))
 
 (nrepl-interactive-eval "(require 'troncle.core)")
+(nrepl-interactive-eval "(require 'nrepl.discover)")
+(nrepl-discover)
 
 (define-key clojure-mode-map (kbd "C-c t R") 'troncle-trace-region)
 
