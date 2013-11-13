@@ -26,8 +26,8 @@ are instrumented with `clojure.tools.trace/trace` so that the results of
 their evaluation during execution are reported in the repl buffer.
 
 In order to do this, you have to let troncle know how to execute the
-code.  You do this using the atom
-`troncle.traces/trace-execution-function`.
+code.  You tell it using the function `troncle.traces/st` (for "set
+test.")
 
 For instance, suppose that you have the following code in `tst.clj`:
 
@@ -92,10 +92,8 @@ For now this is very manual.
 3. `M-x nrepl-jack-in` in your target project.  (Restart the jvm if
    necessary, to get the nrepl-discover middleware operating.)
 
-5. In emacs, open the resulting `troncle.el` then `M-x eval-buffer`
-
-6. Open `src/troncle/core.clj` and hit `C-c C-k` while there to compile
-   it.	
+5. In emacs, open the `troncle.el` from the troncle git repository, then
+   `M-x eval-buffer`
 
 7. In the nrepl buffer, set the command to be executed by troncle using
    `tronce.traces/st` (see [Usage](usage) for an example.)
