@@ -70,7 +70,11 @@ are traced, because those are the only forms in the selected region.
 
 For now this is very manual.
 
-1. In emacs, `M-x package-install RET nrepl-discover RET`
+0. In the shell, `git clone https://github.com/coventry/troncle.git`
+
+1. In emacs, open `nrepl-discover.el` in the troncle repository and run
+   `M-x eval-buffer`.  (At the time I'm writing this the nrepl-discover
+   marmalade package is out of date and incompatible with troncle.)
 
 2. In the `project.clj` file for the lein project where you want to use
    troncle, add
@@ -87,8 +91,6 @@ For now this is very manual.
 
 3. `M-x nrepl-jack-in` in your target project.  (Restart the jvm if
    necessary, to get the nrepl-discover middleware operating.)
-
-4. In the shell, `git clone https://github.com/coventry/troncle.git`
 
 5. In emacs, open the resulting `troncle.el` then `M-x eval-buffer`
 
