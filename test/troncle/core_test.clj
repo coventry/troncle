@@ -21,17 +21,6 @@
 
 (def test-form (parse-tree test-string))
 
-(defn line-column-from-offset
-  "Get the line/column position from offset into the string."
-  ([offset linestarts]
-     (line-column-from-offset offset linestarts 0))
-  ([offset linestarts startidx]
-     (let [[linenum soffset]
-           (last (take-while #(<= (% 1) offset)
-                             (map-indexed vector
-                                          (drop startidx linestarts))))]
-       [(+ startidx linenum 1) (- offset soffset -1)])))
-
 (deftest line-column-calculation
   (testing "Line/column conversion works"
     (doseq [[offset ch] (map-indexed vector test-string)

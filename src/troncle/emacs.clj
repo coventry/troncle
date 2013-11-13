@@ -34,10 +34,12 @@
   (let [source-region (safe-read source-region)
         trace-region (safe-read trace-region)
         soffset (nth source-region 1)
+        loffset (->> source c/line-starts
+                     (c/line-column-from-offset soffset) first)
         [tstart tend] (map #(- (nth trace-region %) soffset) [1 2])
         ns (-> ns symbol the-ns)]
     (try (c/trace-marked-forms source tstart tend ns
-                               (partial tracer soffset))
+                               (partial tracer loffset))
          (@traces/trace-execution-function)
          (catch Throwable e
            (clojure.repl/pst e)))))

@@ -27,6 +27,17 @@
         nl #(if (.find m) (.end m))]
     (into [0] (take-while identity (repeatedly nl)))))
 
+(defn line-column-from-offset
+  "Get the line/column position from offset into the string."
+  ([offset linestarts]
+     (line-column-from-offset offset linestarts 0))
+  ([offset linestarts startidx]
+     (let [[linenum soffset]
+           (last (take-while #(<= (% 1) offset)
+                             (map-indexed vector
+                                          (drop startidx linestarts))))]
+       [(+ startidx linenum 1) (- offset soffset -1)])))
+
 (defn offset-from-line-column
   "Get the offset into the string from the line/column position, using
   the positions computed in line-starts"
