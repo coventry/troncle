@@ -1,5 +1,5 @@
 (ns troncle.util
-  (:require [clojure.walk :as w]
+  (:require [clojure.walk2 :as w]
             [clojure.tools.trace :as t]
             [clojure.pprint :as pp]))
 
