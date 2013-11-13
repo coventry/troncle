@@ -8,6 +8,12 @@ code with `(ctt/trace ...)` as you explore how it's working gets
 tedious.  The main idea with troncle is to take most of that tedium
 away.
 
+This is a very rough first cut, which I've published mostly because I'm
+hoping to talk to people at the Clojure Conj about what directions to
+take it in.  If this seems like an interesting project to you, please
+take a look at the [roadmap](#roadmap) and let me know what you think.
+(Whether you're at the Conj or not, of course.)
+
 ## Usage
 
 Currently, troncle has one function: You mark a region of your code,
@@ -35,8 +41,8 @@ For instance, suppose that you have the following code in `tst.clj`:
            (.toLowerCase (subs s 1))))))
 ```
 
-After installing troncle as described in the
-[installation](#Installation) section
+After [installing](#installation) troncle, type the following to tell
+troncle how you want to test this function:
 
 ## Installation
 
