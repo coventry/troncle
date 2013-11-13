@@ -18,6 +18,15 @@
   (binding [*read-eval* nil]
     (read-string s)))
 
+(defn tracer
+  "Instrument a form with tracing code, tracking its source code
+  position."
+  [line-offset form form-transformed]
+  (let [[line column] ((juxt :line :column) (meta form))
+        line (+ line line-offset)]
+    (list 'clojure.tools.trace/trace
+          (pr-str [line column] form) form-transformed)))
+
 (defn trace-region
   "Eval source, taken from source-region instrumenting all forms
   contained in trace-region with tracing"
@@ -26,10 +35,9 @@
         trace-region (safe-read trace-region)
         soffset (nth source-region 1)
         [tstart tend] (map #(- (nth trace-region %) soffset) [1 2])
-        tracer #(list 'clojure.tools.trace/trace
-                      (pr-str ((juxt :line :column) (meta %1)) %1) %2)
         ns (-> ns symbol the-ns)]
-    (try (c/trace-marked-forms source tstart tend ns tracer)
+    (try (c/trace-marked-forms source tstart tend ns
+                               (partial tracer soffset))
          (@traces/trace-execution-function)
          (catch Throwable e
            (clojure.repl/pst e)))))
