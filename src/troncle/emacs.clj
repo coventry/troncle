@@ -3,8 +3,7 @@
             [troncle.core :as c]
             [troncle.traces :as traces]
             [nrepl.discover :as d]
-            [clojure.tools.nrepl.misc :as m]
-            :reload))
+            [clojure.tools.nrepl.misc :as m]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface with emacs

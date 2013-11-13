@@ -1,7 +1,6 @@
 (ns troncle.traces
   (:require [clojure.tools.trace :as t]
-            [clojure.tools.nrepl.misc :as m]
-            :reload))
+            [clojure.tools.nrepl.misc :as m]))
 
 ;; Bash clojure.tools.trace/tracer so that it can be bound dynamically
 (let [m (-> #'t/tracer meta (assoc :dynamic true) (dissoc :private))]
