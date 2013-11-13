@@ -36,7 +36,7 @@ For instance, suppose that you have the following code in `tst.clj`:
 ```
 
 After installing troncle as described in the
-[installation][Installation] section
+[installation](#Installation) section
 
 ## Installation
 
