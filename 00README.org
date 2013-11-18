@@ -84,6 +84,8 @@ traced, condition for tracing, etc.
 
 * Roadmap
 
+** Initial cut
+
 First stage: Take the current point, and report the values of the
 locals at that point.
 
@@ -92,6 +94,34 @@ their values.
 
 Next stage: Take all forms in the region, and instrument them to drop
 to a debugging repl, step between them, etc.
+
+** Second roadmap
+
+I implemented the second stage of the above plan first.  There's been
+some positive response to this.
+
+Someone suggested that it would be good to use the wrapping macro to
+make a test-coverage tool.  It looks like [[https://github.com/lshift/cloverage/blob/master/cloverage/src/cloverage/instrument.clj][cloverage]] already works this
+way.  It appears that that is using something like
+clojure.walk/macroexpand-all, which is erroneous in some cases.  But it
+looks like if I wanted to do this, I would be better off improving
+cloverage.
+
+The main problem I ran into is how to specify the test code to be run
+when the tracing is requested.  There needs to be a few ways of doing
+this.  The existing one is just to call a function in the repl, which
+takes a function with no arguments.  It should be possible to send a
+form for this just by pointing it out in emacs.  It should also be
+possible to name a var to be called.  And it should be possible to
+choose just among test vars, with higher priority given to vars in the
+project namespaces.  There are also autotest tools out there, but I
+think most of them work by checking the disk for changes, so I don't
+think they're going to help, much.  nrepl-discover uses
+nrepl-ido-read-var to choose vars.  I could start with just that, I
+guess.
+
+I'm just doing this with a single testing context at the moment.
+
 
 * Implementation
 
