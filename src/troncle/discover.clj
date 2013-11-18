@@ -51,5 +51,5 @@
 
 (defn ^{:clojure.tools.nrepl.middleware/descriptor {:requires #{#'ses/session}}}
   wrap-discover [handler]
-  (fn [msg] (wrap-discover-logic handler msg)))
+  (fn [msg] (#'wrap-discover-logic handler msg)))
 
