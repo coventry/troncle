@@ -41,7 +41,7 @@
            ;; I have no idea what *err* is bound to in this context,
            ;; but it's nothing I can see.
            (binding [*err* *out*]
-             (clojure.repl/pst e))
+             (clojure.repl/pst e 100))
            ;; Copied from nrepl-op
            (t/send transport (m/response-for msg :status #{:error :done}
                                              :message (.getMessage e)))
