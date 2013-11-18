@@ -1,9 +1,12 @@
 (ns troncle.emacs
-  (:require [clojure.tools.trace :as t]
-            [troncle.core :as c]
+  (:require [troncle.core :as c]
             [troncle.traces :as traces]
+            [troncle.discover :as discover]
+            [clojure.tools.trace :as t]
             [nrepl.discover :as d]
             [clojure.tools.nrepl.misc :as m]))
+
+(ns-unmap *ns* 'provided)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface with emacs
@@ -37,11 +40,11 @@
                      (c/line-column-from-offset soffset) first)
         [tstart tend] (map #(- (nth trace-region %) soffset) [1 2])
         ns (-> ns symbol the-ns)]
-    (try (c/trace-marked-forms source tstart tend ns
-                               (partial tracer loffset))
-         (@traces/trace-execution-function)
-         (catch Throwable e
-           (clojure.repl/pst e)))))
+    (c/trace-marked-forms source tstart tend ns
+                           (partial tracer loffset))
+    ;; Error handling is currently handled in
+    ;; nrepl.discover/wrap-discover-logic.  
+    (@traces/trace-execution-function)))
 
 ;; Add the nrepl-discover metadata
 (let [m (meta #'trace-region)
@@ -51,4 +54,10 @@
                                ["trace-region" "region"]]}}]
   (alter-meta! #'trace-region conj opmap))
 
+(defn set-trace-execution-function
+  "Set the function which is called when forms are sent for
+  compilation with tracing instrumentation."
+  [{:keys [transport var] :as msg}]
+  ())
 
+(def provided true)

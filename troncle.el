@@ -1,12 +1,28 @@
 (require 'clojure-mode)
 (require 'nrepl)
-(require 'nrepl-discover)
 
-;; These need to be synchronous so we know troncle.emacs/trace-region
-;; is available when nrepl-discover runs.
-(nrepl-send-string-sync "(require 'troncle.emacs)" "user")
-(nrepl-send-string-sync "(require 'nrepl.discover)" "user")
-(nrepl-discover)
+(defun map->assoc (m)
+  "Given a (key val ...) list as returned by nrepl, return an
+  association list."
+  (apply 'format-spec-make m))
+
+;; Initialize clojure machinery.  This needs to be synchronous so we
+;; know it's finished before anyone tries to use it.
+(let ((resp (nrepl-send-string-sync "(require 'troncle.emacs)" "user")))
+  (if (assoc-default ':stderr (map->assoc resp))
+      (error "Could not load troncle on clojure server side.")))
+
+(defun troncle-op-handler (buffer)
+  "Return a handler for nrepl responses.  Copied from
+  nrepl-discover's nrepl-discover-op-handler."
+  (lexical-let ((buffer buffer))
+    (lambda (response)
+      (nrepl-dbind-response response (message)
+	(when message (message message))
+	;; There is a bunch more I'm leaving out from
+	;; nrepl-discover-op-handler.  Definitely want to go back and
+	;; look at how it handles overlays, when I get to that part.
+	))))
 
 (defun str (&rest vals) (mapconcat (lambda (v) (pp-to-string v)) vals " "))
 
@@ -23,9 +39,8 @@
 				     dstart dend)
 			   "source-region" (str (cons fn defun-region))
 			   "trace-region" (str (list fn rstart rend)))
-		     (nrepl-discover-op-handler (current-buffer))))))
+		     (troncle-op-handler (current-buffer))))))
 
 (define-key clojure-mode-map (kbd "C-c t R") 'troncle-trace-region)
 
 (provide 'troncle)
-
