@@ -226,3 +226,11 @@ will do that later, though.
 
 Note that there is nrepl-send-request-sync for synchronous
 communication with the server.
+
+* Deploy checklist
+
+- Bump version numbers in project.clj and troncle.el
+
+- lein deploy clojars
+
+- upload troncle.el to marmalade.  (There is an automated way to do this.)
