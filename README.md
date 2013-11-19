@@ -47,7 +47,11 @@ then choose a region of the `capitalize` form to instrument for tracing
 and send it off with `C-c t R` (`troncle-trace-region`.)  By the way,
 the var you choose with `troncle-set-exec-var` needn't be in the same
 namespace as the code you're interested in tracing, so it is compatible
-with the usual practice of separating code and tests.
+with the usual practice of separating code and tests.  You can also set
+the function to be executed at the repl using `troncle.traces/st`.
+Whichever method you use, the function will be called with no arguments
+on the clojure side when `troncle-trace-region` is called on the emacs
+side.
 
 Suppose we run `C-c t R` with the following region of `tst.clj`
 selected:
@@ -88,14 +92,7 @@ So we've found the bug, a spurious `(.toLowerCase)`.
 
 ## Installation
 
-For now this is very manual.
-
-0. In the shell, `git clone https://github.com/coventry/troncle.git`
-
-1. In emacs, open `nrepl-discover.el` in the troncle repository and run
-   `M-x eval-buffer`.  (At the time I'm writing this the
-   [nrepl-discover](https://github.com/technomancy/nrepl-discover)
-   marmalade package is out of date and incompatible with troncle.)
+1. In emacs, `M-x package-install troncle`.
 
 2. In the `project.clj` file for the lein project where you want to use
    troncle, add
@@ -113,14 +110,14 @@ For now this is very manual.
 3. `M-x nrepl-jack-in` in your target project.  (Restart the jvm if
    necessary, to get the nrepl-discover middleware operating.)
 
-5. In emacs, open the `troncle.el` from the troncle git repository, then
-   `M-x eval-buffer`
+4. Compile the code you want to execute with `C-c C-k`.
 
-7. In the nrepl buffer, set the command to be executed by troncle using
-   `tronce.traces/st` (see [Usage](usage) for an example.)
+5. Set the function to be run by troncle using `M-x
+   troncle-set-exec-var` from emacs or `tronce.traces/st` in the `nrepl`
+   buffer.  (see [Usage](usage) for an example.)
 
-8. Go to the buffer with the code you want to explore, compile it with
-   `C-c C-k`, mark the forms you want traced, and hit `C-c t R`!
+6. Mark the forms you want traced, and hit `C-c t R` and watch the
+   output in the repl!
 
 ## Roadmap
 
