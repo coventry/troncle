@@ -43,9 +43,4 @@
 (doseq [[n v] (ns-publics *ns*)]
   (alter-meta! v assoc :nrepl/op {:name (str n)}))
 
-(defn set-trace-execution-function
-  "Set the function which is called when forms are sent for
-  compilation with tracing instrumentation."
-  [{:keys [transport var] :as msg}]
-  ())
 
