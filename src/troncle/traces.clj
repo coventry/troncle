@@ -56,7 +56,8 @@
     `(let [v# ~form-transformed
            ;; Need to build the string up and print it out atomically,
            ;; or display will be out of order.
-           output# (format "L:%d C:%d %s\n=> %s" ~line ~column '~form v#)]
+           output# (format "L:%d C:%d %s\n=> %s" ~line ~column '~form
+                           (pr-str v#))]
        (println output#) v#)))
 
 
