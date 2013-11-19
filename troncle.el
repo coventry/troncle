@@ -29,9 +29,9 @@
   "Get all top-level forms contained in or neighbouring region
 between point and mark."
   (let ((start (save-excursion (goto-char (min (point) (mark)))
-			       (backward-sexp) (point)))
+			       (beginning-of-defun) (point)))
 	(end   (save-excursion (goto-char (max (point) (mark)))
-			       (forward-sexp)  (point))))
+			       (end-of-defun)  (point))))
     (list start end)))
 
 ;;;###autoload
