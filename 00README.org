@@ -222,6 +222,14 @@ a copy of reader.clj, and leave the rest as-is.  [[http://git-scm.com/book/ch6-7
 to pull reader.clj in and still allow me to track changes to it.  I
 will do that later, though.
 
+** Marmalade
+
+   XXX troncle.el:11:1:Error: Cannot open load file: clojure-mode.  
+
+   Need explicit package requirements.  Doesn't matter that much, since
+   anyone interested in this probably already has clojure-mode
+   installed.
+
 ** Debugger
 
 Note that there is nrepl-send-request-sync for synchronous
