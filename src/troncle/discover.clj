@@ -7,7 +7,8 @@
   Taken from technomancy's nrepl-discover"
   (:require [clojure.tools.nrepl.transport :as t]
             [clojure.tools.nrepl.misc :as m]
-            [clojure.tools.nrepl.middleware.session :as ses]))
+            [clojure.tools.nrepl.middleware.session :as ses]
+            [clojure.repl]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; nrepl interface
