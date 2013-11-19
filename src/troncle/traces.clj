@@ -1,21 +1,6 @@
 (ns troncle.traces
   (:require [troncle.util :as u]))
 
-;; Bash clojure.tools.trace/tracer so that it can be bound dynamically
-(let [m (-> #'t/tracer meta (assoc :dynamic true) (dissoc :private))]
-  (alter-meta! #'t/tracer (constantly m)))
-
-(defmacro with-tracer [tracer & forms]
-  `(binding [t/tracer ~tracer] ~@forms))
-
-(defn trace-fn
-  ([f] (trace-fn nil f))
-  ([msg f]
-     (fn [& args]
-       ;; Probably want to change this.  Does fairly ugly things with
-       ;; a nil msg.
-       (t/trace-fn-call msg f args))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tracing state
 
