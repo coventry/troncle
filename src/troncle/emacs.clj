@@ -6,18 +6,6 @@
             [nrepl.discover :as d]
             [clojure.tools.nrepl.misc :as m]))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Interface with emacs
-
-(defmacro discover-ify
-  "Add the nrepl-discover metadata to the var fn XXX incomplete"
-  [fn args]
-  (let [m (meta fn)]))
-
-(defn safe-read [s]
-  (binding [*read-eval* nil]
-    (read-string s)))
-
 (defn tracer
   "Instrument a form with tracing code, tracking its source code
   position."
@@ -26,6 +14,13 @@
         line (+ line line-offset)]
     (list 'clojure.tools.trace/trace
           (pr-str [line column] form) form-transformed)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Interface with emacs
+
+(defn safe-read [s]
+  (binding [*read-eval* nil]
+    (read-string s)))
 
 (defn trace-region
   "Eval source, taken from source-region instrumenting all forms
