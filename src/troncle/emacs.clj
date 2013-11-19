@@ -6,8 +6,6 @@
             [nrepl.discover :as d]
             [clojure.tools.nrepl.misc :as m]))
 
-(ns-unmap *ns* 'provided)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface with emacs
 

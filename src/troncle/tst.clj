@@ -1,4 +1,5 @@
-(ns troncle.tst)
+(ns troncle.tst
+  (:use [clojure.test]))
 
 (defn ^String capitalize
   [^CharSequence s]
@@ -7,3 +8,6 @@
       (.toUpperCase s)
       (str (.toUpperCase (subs s 0 1))
            (.toLowerCase (subs s 1))))))
+
+(deftest capitalization
+  (is (= "Foo" (capitalize "foo"))))
