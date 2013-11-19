@@ -44,13 +44,9 @@
     ;; nrepl.discover/wrap-discover-logic.  
     (@traces/trace-execution-function)))
 
-;; Add the nrepl-discover metadata
-(let [m (meta #'trace-region)
-      opmap {:nrepl/op {:name (-> m :name str) :doc (m :doc)
-                        :args [["source"        "string"]
-                               ["source-region" "region"]
-                               ["trace-region" "region"]]}}]
-  (alter-meta! #'trace-region conj opmap))
+;; Publish all the functions in here to the discover framework.
+(doseq [[n v] (ns-publics *ns*)]
+  (alter-meta! v assoc :nrepl/op {:name (str n)}))
 
 (defn set-trace-execution-function
   "Set the function which is called when forms are sent for
