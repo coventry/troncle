@@ -58,7 +58,8 @@
         (<= start so eo end)))))
 
 (defn maybe-mark-form [linestarts start end f]
-  (if (in-region? linestarts start end f)
+  (if (and (instance? clojure.lang.IObj f)
+           (in-region? linestarts start end f))
     (vary-meta f conj {::wrap true})
     f))
 
