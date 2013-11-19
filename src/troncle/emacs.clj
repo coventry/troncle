@@ -41,8 +41,8 @@
     (c/trace-marked-forms source tstart tend ns
                            (partial tracer loffset))
     ;; Error handling is currently handled in
-    ;; nrepl.discover/wrap-discover-logic.  
-    (@traces/trace-execution-function)))
+    ;; discover/wrap-discover-logic.  
+    {:message (@traces/trace-execution-function)}))
 
 ;; Publish all the functions in here to the discover framework.
 (doseq [[n v] (ns-publics *ns*)]
