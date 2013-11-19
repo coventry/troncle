@@ -11,17 +11,6 @@
 (require 'clojure-mode)
 (require 'nrepl)
 
-(defun map->assoc (m)
-  "Given a (key val ...) list as returned by nrepl, return an
-  association list."
-  (apply 'format-spec-make m))
-
-;; Initialize clojure machinery.  This needs to be synchronous so we
-;; know it's finished before anyone tries to use it.
-(let ((resp (nrepl-send-string-sync "(require 'troncle.emacs)" "user")))
-  (if (assoc-default ':stderr (map->assoc resp))
-      (error "Could not load troncle on clojure server side.")))
-
 (defun troncle-op-handler (buffer)
   "Return a handler for nrepl responses.  Copied from
   nrepl-discover's nrepl-discover-op-handler."
