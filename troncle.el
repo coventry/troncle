@@ -1,3 +1,12 @@
+;;; troncle.el --- Emacs convenience functions for tracing clojure code
+;; Version: 0.1.0
+;; URL: https://github.com/coventry/troncle
+
+;; A library of functions for quickly wrapping and executing clojure
+;; code with tracing instrumentation.  See
+;; https://github.com/coventry/troncle for usage and installation
+;; instructions.
+
 (require 'clojure-mode)
 (require 'nrepl)
 
@@ -26,8 +35,15 @@
 
 (defun str (&rest vals) (mapconcat (lambda (v) (pp-to-string v)) vals " "))
 
+;;;###autoload
 (defun troncle-trace-region (rstart rend)
-  "See docstring for nrepl-trace-region"
+  "Send top-level form point is in to troncle.emacs/trace-region
+via nrepl protocol.  The form is re-compiled, with all evaluable
+forms in the current emacs region (between (point) and mark) are
+instrumented wiht tracing.  Then
+troncle.traces/trace-execution-function is executed.  (See
+troncle-set-exec-var for a way to set this.)
+"
   (interactive "r")
   (save-excursion
     (let* ((defun-region (nrepl-region-for-expression-at-point))
@@ -40,9 +56,11 @@
 			   "source-region" (str (cons fn defun-region))
 			   "trace-region" (str (list fn rstart rend)))
 		     (troncle-op-handler (current-buffer))))))
-
+;;;###autoload
 (defun troncle-discover-choose-var (ns)
-  "Let user choose a var.  Copied from nrepl-discover."
+  "Choose a var to be executed when forms are sent for tracing
+instrumentation with troncle-trace-region.  The var must be a fn
+which takes no arguments."
   (let ((troncle-discover-var nil)) ; poor man's promises
     (nrepl-ido-read-var (or ns "user")
                         (lambda (var) (setq troncle-discover-var var)))
@@ -59,7 +77,11 @@
 		 (troncle-op-handler (current-buffer))))
 
 
-(define-key clojure-mode-map (kbd "C-c t R") 'troncle-trace-region)
-(define-key clojure-mode-map (kbd "C-c t E") 'troncle-set-exec-var)
+(eval-after-load 'clojure-mode
+  '(progn
+     (define-key clojure-mode-map (kbd "C-c t R") 'troncle-trace-region)
+     (define-key clojure-mode-map (kbd "C-c t E") 'troncle-set-exec-var)))
 
 (provide 'troncle)
+
+;;; troncle.el ends here
