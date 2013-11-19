@@ -97,7 +97,7 @@ So we've found the bug, a spurious `(.toLowerCase)`.
    :repl-options {:nrepl-middleware [troncle.discover/wrap-discover]}
    ```
 
-   Also add `[troncle "0.1.0-SNAPSHOT"]` to your project.clj's
+   Also add `[troncle "0.1.1-SNAPSHOT"]` to your project.clj's
    `:dependencies` vector.
    
   You can also add these modifications to your `:user` map in your
