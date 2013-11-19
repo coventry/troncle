@@ -1,12 +1,11 @@
 # troncle
 
 Troncle is a proof-of-concept integration of clojure's tracing tools
-with emacs, built around technomancy's innovative
+with emacs, inspired by technomancy's innovative
 [nrepl-discover](https://github.com/technomancy/nrepl-discover) and a
 robust (very simple) [code-walking/wrapping
 macro](https://github.com/coventry/troncle/blob/master/src/troncle/macroshka.clj)
 I've developed.
-
 
 `clojure.tools.trace` is super-handy for exploring how code is
 executing, but wrapping and unwrapping subforms with `(ctt/trace ...)`
@@ -14,11 +13,8 @@ gets tedious.  The main idea with troncle is to take most of that tedium
 away by letting you use emacs to point at the forms you want to wrap and
 then doing the wrapping for you automatically during compilation.
 
-This release is a very rough first cut, which I've published mostly
-because I'm hoping to talk to people at the Clojure Conj about what
-directions to take it in.  If this seems like an interesting project to
-you, please take a look at the [roadmap](#roadmap) and let me know what
-you think.  (Whether you're at the Conj or not, of course.)  If it seems
+If this seems like an interesting project to you, please take a look at
+the [roadmap](#roadmap) and let me know what you think.  If it seems
 useless or otherwise misguided, please also let me know what you
 think. :-) All feedback is welcome.
 
