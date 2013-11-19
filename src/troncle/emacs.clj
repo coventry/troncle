@@ -45,7 +45,8 @@
   [{:keys [transport var] :as msg}]
   (if-let [v (-> var symbol resolve)]
     (do (traces/st v)
-        )))
+        {:message (str "Execution fn set to var " var)})
+    {:message "No such var." :status #{:error :done}}))
 
 ;; Publish all the functions in here to the discover framework.
 (doseq [[n v] (ns-publics *ns*)]
