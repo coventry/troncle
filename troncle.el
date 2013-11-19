@@ -46,7 +46,7 @@ troncle-set-exec-var for a way to set this.)
 			   "source-region" (str (cons fn defun-region))
 			   "trace-region" (str (list fn rstart rend)))
 		     (troncle-op-handler (current-buffer))))))
-;;;###autoload
+
 (defun troncle-discover-choose-var (ns)
   "Choose a var to be executed when forms are sent for tracing
 instrumentation with troncle-trace-region.  The var must be a fn
@@ -59,6 +59,7 @@ which takes no arguments."
       (sit-for 0.01))
     (concat nrepl-ido-ns "/" troncle-discover-var)))
 
+;;;###autoload
 (defun troncle-set-exec-var ()
   (interactive)
   (nrepl-send-op "set-exec-var"
