@@ -121,8 +121,8 @@ So we've found the bug, a spurious `(.toLowerCase)`.
 4. Compile the code you want to execute with `C-c C-k`.
 
 5. Set the function to be run by troncle using `M-x
-   troncle-set-exec-var` from emacs or `tronce.traces/st` in the `nrepl`
-   buffer.  (see [Usage](usage) for an example.)
+   troncle-set-exec-var` from emacs or `troncle.traces/st` in the
+   `nrepl` buffer.  (see [Usage](usage) for an example.)
 
 6. Mark the forms you want traced, and hit `C-c t R` and watch the
    output in the repl!
