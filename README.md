@@ -101,14 +101,15 @@ So we've found the bug, a spurious `(.toLowerCase)`.
    ```
 
 2. In the `project.clj` file for the lein project where you want to use
-   troncle, add
+   troncle, add `[troncle "0.1.1-SNAPSHOT"]` to your `:dependencies`
+   vector, and
 
    ```clojure
+   :injections [(require 'troncle.emacs)]
    :repl-options {:nrepl-middleware [troncle.discover/wrap-discover]}
    ```
 
-   Also add `[troncle "0.1.1-SNAPSHOT"]` to your project.clj's
-   `:dependencies` vector.
+   Also add
    
   You can also add these modifications to your `:user` map in your
   `~/.lein/profiles.clj`.
