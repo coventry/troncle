@@ -25,6 +25,15 @@
 
 (defun str (&rest vals) (mapconcat (lambda (v) (pp-to-string v)) vals " "))
 
+(defun troncle-toplevel-region-for-region ()
+  "Get all top-level forms contained in or neighbouring region
+between point and mark."
+  (let ((start (save-excursion (goto-char (min (point) (mark)))
+			       (backward-sexp) (point)))
+	(end   (save-excursion (goto-char (max (point) (mark)))
+			       (forward-sexp)  (point))))
+    (list start end)))
+
 ;;;###autoload
 (defun troncle-trace-region (rstart rend)
   "Send top-level form point is in to troncle.emacs/trace-region
@@ -36,7 +45,7 @@ troncle-set-exec-var for a way to set this.)
 "
   (interactive "r")
   (save-excursion
-    (let* ((defun-region (nrepl-region-for-expression-at-point))
+    (let* ((defun-region (troncle-toplevel-region-for-region))
 	   (dstart (car defun-region)) (dend (car (cdr defun-region)))
 	   (fn (buffer-file-name)))
       (nrepl-send-op "trace-region"
