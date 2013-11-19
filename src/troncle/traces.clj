@@ -1,6 +1,5 @@
 (ns troncle.traces
-  (:require [clojure.tools.trace :as t]
-            [clojure.tools.nrepl.misc :as m]))
+  (:require [troncle.util :as u]))
 
 ;; Bash clojure.tools.trace/tracer so that it can be bound dynamically
 (let [m (-> #'t/tracer meta (assoc :dynamic true) (dissoc :private))]
@@ -44,3 +43,21 @@
   called."
   [fn]
   (swap! trace-execution-function (constantly fn)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Tracing macros
+
+(defn tracer
+  "Instrument a form with tracing code, tracking its source code
+  position."
+  [line-offset form form-transformed]
+  (let [[line column] ((juxt :line :column) (meta form))
+        line (+ line line-offset)]
+    `(let [v# ~form-transformed
+           ;; Need to build the string up and print it out atomically,
+           ;; or display will be out of order.
+           output# (format "L:%d C:%d %s\n=> %s" ~line ~column '~form v#)]
+       (println output#) v#)))
+
+
+

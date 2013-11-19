@@ -6,15 +6,6 @@
             [nrepl.discover :as d]
             [clojure.tools.nrepl.misc :as m]))
 
-(defn tracer
-  "Instrument a form with tracing code, tracking its source code
-  position."
-  [line-offset form form-transformed]
-  (let [[line column] ((juxt :line :column) (meta form))
-        line (+ line line-offset)]
-    (list 'clojure.tools.trace/trace
-          (pr-str [line column] form) form-transformed)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface with emacs
 
@@ -34,7 +25,7 @@
         [tstart tend] (map #(- (nth trace-region %) soffset) [1 2])
         ns (-> ns symbol the-ns)]
     (c/trace-marked-forms source tstart tend ns
-                           (partial tracer loffset))
+                           (partial traces/tracer loffset))
     ;; Error handling is currently handled in
     ;; discover/wrap-discover-logic.  
     {:message (@traces/trace-execution-function)}))
