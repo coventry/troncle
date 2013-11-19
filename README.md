@@ -88,7 +88,13 @@ So we've found the bug, a spurious `(.toLowerCase)`.
 
 ## Installation
 
-1. In emacs, `M-x package-install troncle`.
+1. In emacs, `M-x package-install troncle`, after adding the marmalade
+   repository with 
+
+   ```lisp
+   (add-to-list 'package-archives
+                 '("marmalade" . "http://marmalade-repo.org/packages/"))
+   ```
 
 2. In the `project.clj` file for the lein project where you want to use
    troncle, add
