@@ -39,6 +39,14 @@
     ;; discover/wrap-discover-logic.  
     {:message (@traces/trace-execution-function)}))
 
+(defn set-exec-var
+  "Set the function which is called when forms are sent for
+  compilation with tracing instrumentation."
+  [{:keys [transport var] :as msg}]
+  (if-let [v (-> var symbol resolve)]
+    (do (traces/st v)
+        )))
+
 ;; Publish all the functions in here to the discover framework.
 (doseq [[n v] (ns-publics *ns*)]
   (alter-meta! v assoc :nrepl/op {:name (str n)}))

@@ -41,6 +41,24 @@
 			   "trace-region" (str (list fn rstart rend)))
 		     (troncle-op-handler (current-buffer))))))
 
+(defun troncle-discover-choose-var (ns)
+  "Let user choose a var.  Copied from nrepl-discover."
+  (let ((troncle-discover-var nil)) ; poor man's promises
+    (nrepl-ido-read-var (or ns "user")
+                        (lambda (var) (setq troncle-discover-var var)))
+    ;; async? more like ehsync.
+    (while (not troncle-discover-var)
+      (sit-for 0.01))
+    (concat nrepl-ido-ns "/" troncle-discover-var)))
+
+(defun troncle-set-exec-var ()
+  (interactive)
+  (nrepl-send-op "set-exec-var"
+		 (list "var" (troncle-discover-choose-var
+			      (clojure-find-ns)))
+		 (troncle-op-handler (current-buffer))))
+
+
 (define-key clojure-mode-map (kbd "C-c t R") 'troncle-trace-region)
 
 (provide 'troncle)
