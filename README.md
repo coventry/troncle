@@ -88,10 +88,14 @@ So we've found the bug, a spurious `(.toLowerCase)`.
 
 ## Installation
 
-1. In emacs, `M-x package-install troncle`, after adding the marmalade
-   repository with 
+1. In emacs, `M-x package-install troncle`.  If you haven't already done
+   so, you will first need to add the marmalade repository by putting
+   the following in your `~/.emacs` file and executing it, then
+   installing the `clojure-mode` and `nrepl` packages with `M-x
+   package-install`.
 
    ```lisp
+   (require 'package)
    (add-to-list 'package-archives
                  '("marmalade" . "http://marmalade-repo.org/packages/"))
    ```
