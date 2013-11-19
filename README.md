@@ -94,7 +94,7 @@ So we've found the bug, a spurious `(.toLowerCase)`.
    troncle, add
 
    ```clojure
-   :repl-options {:nrepl-middleware [nrepl.discover/wrap-discover]}
+   :repl-options {:nrepl-middleware [troncle.discover/wrap-discover]}
    ```
 
    Also add `[troncle "0.1.0-SNAPSHOT"]` to your project.clj's
@@ -104,7 +104,8 @@ So we've found the bug, a spurious `(.toLowerCase)`.
   `~/.lein/profiles.clj`.
 
 3. `M-x nrepl-jack-in` in your target project.  (Restart the jvm if
-   necessary, to get the nrepl-discover middleware operating.)
+   necessary, to get the `troncle.discover` `nrepl` middleware
+   operating.)
 
 4. Compile the code you want to execute with `C-c C-k`.
 
