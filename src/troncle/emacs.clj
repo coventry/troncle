@@ -54,4 +54,3 @@
   [{:keys [transport var] :as msg}]
   ())
 
-(def provided true)
