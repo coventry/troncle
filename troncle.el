@@ -60,5 +60,6 @@
 
 
 (define-key clojure-mode-map (kbd "C-c t R") 'troncle-trace-region)
+(define-key clojure-mode-map (kbd "C-c t E") 'troncle-set-exec-var)
 
 (provide 'troncle)
