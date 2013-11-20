@@ -1,7 +1,6 @@
 (ns troncle.emacs
   (:require [troncle.core :as c]
-            [troncle.traces :as traces]
-            [troncle.discover :as discover]))
+            [troncle.traces :as traces]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface with emacs

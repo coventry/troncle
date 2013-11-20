@@ -62,25 +62,28 @@ troncle-set-exec-var for a way to set this.)
 			   "trace-region" (str (list fn rstart rend)))
 		     (troncle-op-handler (current-buffer))))))
 
-(defun troncle-discover-choose-var (ns)
+(defun troncle-discover-choose-var (ns exec-fn)
   "Choose a var to be executed when forms are sent for tracing
 instrumentation with troncle-trace-region.  The var must be a fn
-which takes no arguments."
-  (let ((troncle-discover-var nil)) ; poor man's promises
+which takes no arguments. Invokes exec-fn with the fully
+qualified var-name as string."
+  (lexical-let ((exec-fn exec-fn))
     (nrepl-ido-read-var (or ns "user")
-                        (lambda (var) (setq troncle-discover-var var)))
-    ;; async? more like ehsync.
-    (while (not troncle-discover-var)
-      (sit-for 0.01))
-    (concat nrepl-ido-ns "/" troncle-discover-var)))
+                        (lambda (var)
+                          (funcall exec-fn
+                                   (concat nrepl-ido-ns "/"
+                                   var))))))
 
 ;;;###autoload
 (defun troncle-set-exec-var ()
   (interactive)
-  (nrepl-send-op "set-exec-var"
-		 (list "var" (troncle-discover-choose-var
-			      (clojure-find-ns)))
-		 (troncle-op-handler (current-buffer))))
+  (lexical-let ((handler (troncle-op-handler (current-buffer))))
+    (troncle-discover-choose-var
+     (clojure-find-ns)
+     (lambda (var)
+       (nrepl-send-op "set-exec-var"
+                      (list "var" var)
+                      handler)))))
 
 
 (eval-after-load 'clojure-mode
