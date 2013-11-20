@@ -42,12 +42,13 @@ you'd do `C-c t E` (`troncle-set-exec-var`), choose `capitalization`,
 then choose a region of the `capitalize` form to instrument for tracing
 and send it off with `C-c t R` (`troncle-trace-region`.)  By the way,
 the var you choose with `troncle-set-exec-var` needn't be in the same
-namespace as the code you're interested in tracing, so it is compatible
-with the usual practice of separating code and tests.  You can also set
-the function to be executed at the repl using `troncle.traces/st`.
-Whichever method you use, the function will be called with no arguments
-on the clojure side when `troncle-trace-region` is called on the emacs
-side.
+namespace as the code you're interested in tracing (pop up to the
+namespace-level by selecting ".." in the minibuffer), so it is
+compatible with the usual practice of separating code and tests.  You
+can also set the function to be executed at the repl using
+`troncle.traces/st`.  Whichever method you use, the function will be
+called with no arguments on the clojure side when `troncle-trace-region`
+is called on the emacs side.
 
 Suppose we run `C-c t R` with the following region of `tst.clj`
 selected:
