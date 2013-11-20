@@ -106,7 +106,6 @@ So we've found the bug, a spurious `(.toLowerCase)`.
    vector, and
 
    ```clojure
-   :injections [(require 'troncle.emacs)]
    :repl-options {:nrepl-middleware [troncle.discover/wrap-discover]}
    ```
 
