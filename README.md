@@ -164,7 +164,7 @@ entire clojure source code.)
 These are the directions I'd like to move it in:
 
 1. Emacs convenience functions for passing "load this file" and "run
-   this test" functions to `tronce.traces/st`.
+   this test" functions to `troncle.traces/st`.
 
 2. Tracing instrumentation for multiple regions within a top-level
    form. 
