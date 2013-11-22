@@ -210,6 +210,15 @@ just put a copy in the local directory?  Might as well, hmm?
 Instructions need to say "put these TWO files somewhere emacs can find
 them.  It's just a prototype at this stage, anyway.
 
+** Debugger
+
+Note that there is nrepl-send-request-sync for synchronous
+communication with the server.
+
+** Manipulating the current region semantically
+
+https://github.com/emacsmirror/expand-region/blob/master/clojure-mode-expansions.el
+
 * Todo
 
 Extend tools.reader to thread the dispatch maps through the function
@@ -222,7 +231,8 @@ a copy of reader.clj, and leave the rest as-is.  [[http://git-scm.com/book/ch6-7
 to pull reader.clj in and still allow me to track changes to it.  I
 will do that later, though.
 
-** Marmalade
+** DONE Marmalade 
+   CLOSED: [2013-11-20 Wed 13:29]
 
    XXX troncle.el:11:1:Error: Cannot open load file: clojure-mode.  
 
@@ -230,10 +240,23 @@ will do that later, though.
    anyone interested in this probably already has clojure-mode
    installed.
 
-** Debugger
+   This was fixed by Steve Purcell's recent patch.
 
-Note that there is nrepl-send-request-sync for synchronous
-communication with the server.
+** DONE troncle-set-exec-var
+   CLOSED: [2013-11-20 Wed 13:29]
+
+   The claim in the README.md that this takes vars from anywhere is
+   currently inaccurate.  nrepl-ido-read-var only takes vars from the
+   current ns.  Should extend troncle-set-exec-var to also ask for the
+   ns, with anything similar to the current ns near the front of the
+   list.
+
+   This is actually already possible, I just have to update the 
+
+** DONE Make troncle work with cider
+   CLOSED: [2013-11-21 Thu 00:50]
+
+   Will need to do this to get it on melpa.
 
 * Deploy checklist
 
