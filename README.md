@@ -20,6 +20,8 @@ think. :-) All feedback is welcome.
 
 ## Usage
 
+### Basic tracing
+
 Troncle's goal is to speed up a typical repl debugging workflow.
 When you hit a bug, you write a test for it.  For instance, suppose we
 have the following simple clojure file.
@@ -45,10 +47,10 @@ the var you choose with `troncle-set-exec-var` needn't be in the same
 namespace as the code you're interested in tracing (pop up to the
 namespace-level by selecting ".." in the minibuffer), so it is
 compatible with the usual practice of separating code and tests.  You
-can also set the function to be executed at the repl using
-`troncle.traces/st`.  Whichever method you use, the function will be
-called with no arguments on the clojure side when `troncle-trace-region`
-is called on the emacs side.
+can also set the function to be executed at the repl by passing the
+function `t/st` a function which takes no arguments.  Whichever method
+you use, the function will be called with no arguments on the clojure
+side when `troncle-trace-region` is called on the emacs side.
 
 Suppose we run `C-c t R` with the following region of `tst.clj`
 selected:
@@ -86,6 +88,28 @@ L:8 C:7 (.toLowerCase (str (.toUpperCase (subs s 0 1)) (.toLowerCase (subs s 1))
 ```
 
 So we've found the bug, a spurious `(.toLowerCase)`.
+
+### Hooking in to the traces
+
+Sometimes, you don't want every iteration to be traced, or want some
+extra behavior to take place.  You can do that at the repl by passing
+custom functions which take one argument to the following functions:
+
+1. `t/sc`: Pass this a predicate to specify whether or not to log the
+   current evaluation of the form.
+
+2. `t/sh`: Pass this a function which you want to run every time the
+   tracing instrumentation is exercised.
+
+3. `t/sr`: Pass this a function which will report the trace.
+
+When called, the functions you specify this way will be passed a single
+map with keys `:line`, `:column`, `:form` (form under consideration and
+its source code position) and `:value` (the value returned from
+evaluating the form.)
+
+(`t/` is just a convenience namespace.  The canonical location for these
+functions is [`troncle.traces`](src/troncle/traces.clj).)
 
 ## Installation
 

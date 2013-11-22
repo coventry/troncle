@@ -95,3 +95,13 @@ VALUE: The result of evaluating form."
        (when (@trace-cond ~args)
          (@report-trace-function ~args))
        ~value)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Convenience namespace
+
+(ns t)
+
+(doseq [[n v] (ns-publics 'troncle.traces)]
+  (eval `(def ~n ~v)))
+
+(ns troncle.traces)
