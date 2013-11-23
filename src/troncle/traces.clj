@@ -33,6 +33,10 @@
   "Function which is run when the trace is requested"
   (atom (constantly nil)))
 
+(def trace-objects
+  "atom used to store results for exploring it at the repl"
+  (atom nil))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Control of tracing state
 
@@ -90,6 +94,8 @@ VALUE: The result of evaluating form."
   ;; Need to build the string up and print it out atomically, or
   ;; display will be out of order.
   (println (format "L:%d C:%d %s\n=> %s" line column form (pr-str value))))
+
+(sr repl-report-trace) ;; Set as the default trace report
 
 ;; Taken from clojure.tools.trace.
 (defn trace-var
