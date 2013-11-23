@@ -1,6 +1,7 @@
 (ns troncle.emacs
   (:require [troncle.core :as c]
-            [troncle.traces :as traces]))
+            [troncle.traces :as traces]
+            [clojure.tools.trace :as ctt]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface with emacs
@@ -35,8 +36,22 @@
         {:message (str "Execution fn set to var " var)})
     {:message "No such var." :status #{:error :done}}))
 
+;; Taken from nrepl.discover
+(defn toggle-trace-var
+  "Wrap or unwrap calls to the given var in tracing instrumentation"
+  [{:keys [transport var] :as msg}]
+  (try
+    (if-let [v (resolve (symbol var))]
+      (if (-> v meta :clojure.tools.trace/traced)
+        (do (ctt/untrace-var* v)
+            {:status :done :message (str var " untraced.")})
+        (do (traces/trace-var v) ;; Altered from nrepl.discover
+            {:status :done :message (str var " traced.")}))
+      {:status #{:error :done} :message "no such var"})
+    (catch Exception e
+      (#'ctt/tracer "Error" (.getMessage e))
+      {:status #{:error :done} :message (.getMessage e)})))
+
 ;; Publish all the functions in here to the discover framework.
 (doseq [[n v] (ns-publics *ns*)]
   (alter-meta! v assoc :nrepl/op {:name (str n)}))
-
-

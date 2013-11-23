@@ -74,22 +74,29 @@ qualified var-name as string."
                                    (concat nrepl-ido-ns "/"
                                    var))))))
 
-;;;###autoload
-(defun troncle-set-exec-var ()
-  (interactive)
-  (lexical-let ((handler (troncle-op-handler (current-buffer))))
+(defun troncle-send-var (opname)
+  "Get user to choose a var to send to OPNAME"
+  (lexical-let ((handler (troncle-op-handler (current-buffer)))
+		(opname opname))
     (troncle-discover-choose-var
      (clojure-find-ns)
      (lambda (var)
-       (nrepl-send-op "set-exec-var"
-                      (list "var" var)
-                      handler)))))
+       (nrepl-send-op opname (list "var" var) handler)))))
+
+;;;###autoload
+(defun troncle-set-exec-var ()
+  (interactive) (troncle-send-var "set-exec-var"))
+
+;;;###autoload
+(defun troncle-toggle-trace-var ()
+  (interactive) (troncle-send-var "toggle-trace-var"))
 
 
 (eval-after-load 'clojure-mode
   '(progn
      (define-key clojure-mode-map (kbd "C-c t R") 'troncle-trace-region)
-     (define-key clojure-mode-map (kbd "C-c t E") 'troncle-set-exec-var)))
+     (define-key clojure-mode-map (kbd "C-c t E") 'troncle-set-exec-var)
+     (define-key clojure-mode-map (kbd "C-c t V") 'troncle-toggle-trace-var)))
 
 (provide 'troncle)
 

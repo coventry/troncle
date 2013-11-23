@@ -48,9 +48,10 @@ namespace as the code you're interested in tracing (pop up to the
 namespace-level by selecting ".." in the minibuffer), so it is
 compatible with the usual practice of separating code and tests.  You
 can also set the function to be executed at the repl by passing the
-function `t/st` a function which takes no arguments.  Whichever method
-you use, the function will be called with no arguments on the clojure
-side when `troncle-trace-region` is called on the emacs side.
+function `t/st` a function which takes no arguments (E.g., `(t/st
+troncle.tst/capitalization)`.  Whichever method you use, the function
+will be called with no arguments on the clojure side when
+`troncle-trace-region` is called on the emacs side.
 
 Suppose we run `C-c t R` with the following region of `tst.clj`
 selected:
@@ -110,6 +111,29 @@ evaluating the form.)
 
 (`t/` is just a convenience namespace.  The canonical location for these
 functions is [`troncle.traces`](src/troncle/traces.clj).)
+
+### Tracing a var
+
+This is taken from technomancy's `nrepl-discover`.  The key sequence
+`C-c t V` will ask you for a var to trace.  This will be traced in the
+same way as it would be by `clojure.tools.trace/trace-vars`.  For
+instance if you go back to `tst.clj`, type `C-c t V` and choose
+`capitalize`, hit `C-SPC` to specify an empty region, then `C-c t R` to
+run the test, you'll see something like the following output in the repl
+buffer:
+
+```clojure
+TRACE t3710: (troncle.tst/capitalize "foo")
+TRACE t3710: => "foo"
+```
+
+`C-c t V` again to turn the trace off, and this time `C-c t R` doesn't
+produce that tracing output.
+
+There is a hook to control var tracing, too: `t/sa`.  Pass this a
+predicate for whether to output a trace on any given call to the traced
+var.  It takes one argument: a list of the arguments passed in the
+call.  E.g., `
 
 ## Installation
 
