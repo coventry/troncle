@@ -11,93 +11,37 @@
 ;; code with tracing instrumentation.  See
 ;; https://github.com/coventry/troncle for usage and installation
 ;; instructions.
+;; 
+;; This is a stub: To ensure that troncle's elisp and clojure logic
+;; are compatible, the elisp for interaction with troncle is loaded
+;; from the troncle jar file on the clojure side.
 
 ;;; Code:
 
-(require 'clojure-mode)
-(require 'nrepl)
+(provide 'troncle)
 
-(defun troncle-op-handler (buffer)
-  "Return a handler for nrepl responses.  Copied from
-  nrepl-discover's nrepl-discover-op-handler."
-  (lexical-let ((buffer buffer))
-    (lambda (response)
-      (nrepl-dbind-response response (message)
-	(when message (message message))
-	;; There is a bunch more I'm leaving out from
-	;; nrepl-discover-op-handler.  Definitely want to go back and
-	;; look at how it handles overlays, when I get to that part.
-	))))
+(defun map->assoc (m)
+  "Given a (key val ...) list as returned by nrepl, return an
+  association list."
+  (apply 'format-spec-make m))
 
 (defun str (&rest vals) (mapconcat (lambda (v) (pp-to-string v)) vals " "))
 
-(defun troncle-toplevel-region-for-region ()
-  "Get all top-level forms contained in or neighbouring region
-between point and mark."
-  (let ((start (save-excursion (goto-char (min (point) (mark)))
-			       (beginning-of-defun) (point)))
-	(end   (save-excursion (goto-char (max (point) (mark)))
-			       (end-of-defun)  (point))))
-    (list start end)))
+(defun troncle-get-elisp ()
+  "Pull the elisp interaction logic out of clojure as a string"
+  (let* ((get-troncle-cmd "(troncle.emacs/get-troncle-source)")
+	 (resp (map->assoc (nrepl-send-string-sync get-troncle-cmd)))
+	 (troncle-src (assoc-default ':value resp)))
+    (unless (string-match "(provide 'troncle)" troncle-src)
+      (error (concat "Could not get troncle interaction elisp from repl server.\n"
+		     "Make sure your clojure project has troncle loaded.\n"
+		     "See https://github.com/coventry/troncle#installation")))
+    (mapconcat 'identity (split-string-and-unquote troncle-src) "\n")))
 
-;;;###autoload
-(defun troncle-trace-region (rstart rend)
-  "Send top-level form point is in to troncle.emacs/trace-region
-via nrepl protocol.  The form is re-compiled, with all evaluable
-forms in the current emacs region (between (point) and mark) are
-instrumented wiht tracing.  Then
-troncle.traces/trace-execution-function is executed.  (See
-troncle-set-exec-var for a way to set this.)
-"
-  (interactive "r")
-  (save-excursion
-    (let* ((defun-region (troncle-toplevel-region-for-region))
-	   (dstart (car defun-region)) (dend (car (cdr defun-region)))
-	   (fn (buffer-file-name)))
-      (nrepl-send-op "trace-region"
-		     ;; nrepl-send-op can only handle strings
-		     (list "source" (buffer-substring-no-properties
-				     dstart dend)
-			   "source-region" (str (cons fn defun-region))
-			   "trace-region" (str (list fn rstart rend)))
-		     (troncle-op-handler (current-buffer))))))
+(defun troncle-load-elisp ()
+    ;; Load the forms provided from clojure
+    (with-temp-buffer (insert (troncle-get-elisp)) (eval-buffer)))
 
-(defun troncle-discover-choose-var (ns exec-fn)
-  "Choose a var to be executed when forms are sent for tracing
-instrumentation with troncle-trace-region.  The var must be a fn
-which takes no arguments. Invokes exec-fn with the fully
-qualified var-name as string."
-  (lexical-let ((exec-fn exec-fn))
-    (nrepl-ido-read-var (or ns "user")
-                        (lambda (var)
-                          (funcall exec-fn
-                                   (concat nrepl-ido-ns "/"
-                                   var))))))
-
-(defun troncle-send-var (opname)
-  "Get user to choose a var to send to OPNAME"
-  (lexical-let ((handler (troncle-op-handler (current-buffer)))
-		(opname opname))
-    (troncle-discover-choose-var
-     (clojure-find-ns)
-     (lambda (var)
-       (nrepl-send-op opname (list "var" var) handler)))))
-
-;;;###autoload
-(defun troncle-set-exec-var ()
-  (interactive) (troncle-send-var "set-exec-var"))
-
-;;;###autoload
-(defun troncle-toggle-trace-var ()
-  (interactive) (troncle-send-var "toggle-trace-var"))
-
-
-(eval-after-load 'clojure-mode
-  '(progn
-     (define-key clojure-mode-map (kbd "C-c t R") 'troncle-trace-region)
-     (define-key clojure-mode-map (kbd "C-c t E") 'troncle-set-exec-var)
-     (define-key clojure-mode-map (kbd "C-c t V") 'troncle-toggle-trace-var)))
-
-(provide 'troncle)
+(troncle-load-elisp)
 
 ;;; troncle.el ends here

@@ -6,6 +6,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interface with emacs
 
+(defn get-troncle-source
+  "Called when troncle.el is loaded, to get the elisp interaction
+  logic"
+  [& dummy] ;; Not meant to be called via discovery mechanism
+  (slurp (clojure.java.io/resource "troncle-core.el")))
+
 (defn safe-read [s]
   (binding [*read-eval* nil]
     (read-string s)))
