@@ -1,6 +1,6 @@
 ;;; troncle.el --- Emacs convenience functions for tracing clojure code
 
-;; Version: 0.1.1
+;; Version: 0.1.2
 ;; Author: Alex Coventry
 ;; URL: https://github.com/coventry/troncle
 ;; Package-Requires: ((nrepl "0.2.0"))

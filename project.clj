@@ -1,4 +1,4 @@
-(defproject troncle "0.1.1-SNAPSHOT"
+(defproject troncle "0.1.2-SNAPSHOT"
   :description "A library of functions for quickly wrapping and executing clojure
 code with tracing instrumentation from emacs."
   :url "https://github.com/coventry/troncle"

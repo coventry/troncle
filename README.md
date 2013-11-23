@@ -150,7 +150,7 @@ call.  E.g., `
    ```
 
 2. In the `project.clj` file for the lein project where you want to use
-   troncle, add `[troncle "0.1.1-SNAPSHOT"]` to your `:dependencies`
+   troncle, add `[troncle "0.1.2-SNAPSHOT"]` to your `:dependencies`
    vector, and
 
    ```clojure
