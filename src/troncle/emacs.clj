@@ -25,7 +25,7 @@
                            (partial traces/tracer loffset))
     ;; Error handling is currently handled in
     ;; discover/wrap-discover-logic.  
-    {:message (@traces/trace-execution-function)}))
+    {:message (pr-str (@traces/trace-execution-function)) :status :done}))
 
 (defn set-exec-var
   "Set the function which is called when forms are sent for

@@ -38,7 +38,8 @@
   [handler {:keys [transport op session] :as msg}]
   (if-let [discovered-handler ((ops) op)]
     (try (push-thread-bindings @session)
-         (discovered-handler msg)
+         (->> (discovered-handler msg) (apply concat)
+              (apply m/response-for msg) (t/send transport))
          (catch Throwable e
            ;; I have no idea what *err* is bound to in this context,
            ;; but it's nothing I can see.
