@@ -149,6 +149,12 @@ call.  E.g., `
                  '("marmalade" . "http://marmalade-repo.org/packages/"))
    ```
 
+   That assumes you're using `nrepl.el`.  Troncle is also compatible
+   with `cider.el`, so if you're using that put `troncle.el` from this
+   repository somewhere on your emacs `load-path`.
+
+1. Put the following in your `~/.emacs`: `(load-library "troncle")`.
+
 2. In the `project.clj` file for the lein project where you want to use
    troncle, add `[troncle "0.1.2-SNAPSHOT"]` to your `:dependencies`
    vector, and

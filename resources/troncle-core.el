@@ -1,7 +1,20 @@
 ;; Clojure interaction logic
 
 (require 'clojure-mode)
-(require 'nrepl)
+
+;; cider.el/nrepl.el compatibility.  Grr
+(let ((prefix (if (featurep 'cider) "cider-" "nrepl-")))
+ (dolist (var '("send-op"
+		"current-ns"
+		"ido-read-var"
+		"ido-ns"))
+   (let ((aliased-var (intern (concat prefix var)))
+	 (alias-sym (intern (concat "troncle--" var))))
+     (cond ((functionp aliased-var)
+	    (defalias alias-sym aliased-var))
+	   ((boundp aliased-var)
+	    (defvaralias alias-sym aliased-var))
+	   ('t (error "%S is not defined." aliased-var))))))
 
 (defun troncle-op-handler (buffer)
   "Return a handler for nrepl responses.  Copied from
@@ -35,8 +48,8 @@ troncle-set-exec-var for a way to set this.)"
     (let* ((defun-region (troncle-toplevel-region-for-region))
 	   (dstart (car defun-region)) (dend (car (cdr defun-region)))
 	   (fn (buffer-file-name)))
-      (nrepl-send-op "trace-region"
-		     ;; nrepl-send-op can only handle strings
+      (troncle--send-op "trace-region"
+		     ;; *-send-op can only handle strings
 		     (list "source" (buffer-substring-no-properties
 				     dstart dend)
 			   "source-region" (str (cons fn defun-region))
@@ -56,10 +69,10 @@ instrumentation with troncle-trace-region.  The var must be a fn
 which takes no arguments. Invokes exec-fn with the fully
 qualified var-name as string."
   (lexical-let ((exec-fn exec-fn))
-    (nrepl-ido-read-var (or ns "user")
+    (troncle--ido-read-var (or ns "user")
                         (lambda (var)
                           (funcall exec-fn
-                                   (concat nrepl-ido-ns "/"
+                                   (concat troncle--ido-ns "/"
                                    var))))))
 
 (defun troncle-send-var (opname)
@@ -69,7 +82,7 @@ qualified var-name as string."
     (troncle-discover-choose-var
      (clojure-find-ns)
      (lambda (var)
-       (nrepl-send-op opname (list "var" var) handler)))))
+       (troncle--send-op opname (list "var" var) handler)))))
 
 ;;;###autoload
 (defun troncle-set-exec-var ()
@@ -87,5 +100,3 @@ qualified var-name as string."
      (define-key clojure-mode-map (kbd "C-c t V") 'troncle-toggle-trace-var)))
 
 (provide 'troncle)
-
-

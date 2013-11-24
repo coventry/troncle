@@ -18,7 +18,8 @@
 
 ;;; Code:
 
-(provide 'troncle)
+(unless (require 'cider nil t)
+  (require 'nrepl))
 
 (defun map->assoc (m)
   "Given a (key val ...) list as returned by nrepl, return an
@@ -38,10 +39,12 @@
 		     "See https://github.com/coventry/troncle#installation")))
     (mapconcat 'identity (split-string-and-unquote troncle-src) "\n")))
 
+;;;###autoload
 (defun troncle-load-elisp ()
-    ;; Load the forms provided from clojure
-    (with-temp-buffer (insert (troncle-get-elisp)) (eval-buffer)))
+  (interactive)
+  ;; Load the forms provided from clojure
+  (with-temp-buffer (insert (troncle-get-elisp)) (eval-buffer)))
 
-(troncle-load-elisp)
+(provide 'troncle)
 
 ;;; troncle.el ends here
