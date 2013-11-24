@@ -4,6 +4,8 @@
   level down."
   (:require [troncle.wrap :as w]))
 
+(defn wrap-layer [wrapper f] (w/walk-wrap wrapper (macroexpand f)))
+
 (defn wrap-form* 
   "When (stop? f) is true, the result of (->> f inner (outer f)) is
   returned.  Otherwise, return value is (->> f inner macroexpand
@@ -12,10 +14,8 @@
   of wrap-form.  This will cause further recursion into this function
   upon macroexpansion."
   [stop? inner outer wrapper f]
-  (let [ft (inner f)]
-    (outer f (if (stop? f)
-               ft
-               (w/walk-wrap wrapper (macroexpand ft))))))
+  (let [ft (inner f), wft (if (stop? f) ft (wrap-layer wrapper ft))]
+    (outer f wft)))
 
 (defmacro wrap-form 
   "stop? and transform are ns-qualified symbols for functions.
@@ -28,3 +28,4 @@
                  (list `wrap-form stop? inner outer %)
                  %)
               f))
+
