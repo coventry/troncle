@@ -118,9 +118,9 @@ This is taken from technomancy's `nrepl-discover`.  The key sequence
 `C-c t V` will ask you for a var to trace.  This will be traced in the
 same way as it would be by `clojure.tools.trace/trace-vars`.  For
 instance if you go back to `tst.clj`, type `C-c t V` and choose
-`capitalize`, hit `C-SPC` to specify an empty region, then `C-c t R` to
-run the test, you'll see something like the following output in the repl
-buffer:
+`capitalize`, hit `M-< C-SPC` to specify an empty region at the top of
+the buffer, then `C-c t R` to run the test, you'll see something like
+the following output in the repl buffer:
 
 ```clojure
 TRACE t3710: (troncle.tst/capitalize "foo")
