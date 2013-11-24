@@ -4,6 +4,16 @@
   level down."
   (:require [troncle.wrap :as w]))
 
+;; Becase it's a recursing macro, wm/wrap-form needs to reference fns
+;; as var symbols.
+(defonce dummy-ns (create-ns (gensym))) ;; Keep the vars here
+(defn assign-var 
+  "Return a fully-qualified symbol of a var assigned to value v"
+  [name v]
+  (let [s (gensym name)]
+    (intern dummy-ns s v)
+    (symbol (-> dummy-ns ns-name str) (str s))))
+
 (defn wrap-layer [wrapper f] (w/walk-wrap wrapper (macroexpand f)))
 
 (defn wrap-form* 

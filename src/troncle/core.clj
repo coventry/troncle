@@ -74,16 +74,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tracing/wrapping logic
 
-;; Becase it's a recursing macro, wm/wrap-form needs to reference fns
-;; as var symbols.
-(defonce dummy-ns (create-ns (gensym))) ;; Keep the vars here
-(defn assign-var 
-  "Return a fully-qualified symbol of a var assigned to value v"
-  [name v]
-  (let [s (gensym name)]
-    (intern dummy-ns s v)
-    (symbol (-> dummy-ns ns-name str) (str s))))
-
 (def never (constantly false))
 
 (defn maybe-wrap [trace-wrap]
@@ -103,7 +93,7 @@
   using trace-wrap."
   [source start end ns trace-wrap]
   (let [ls (line-starts source)
-        tw (assign-var 'trace-wrap (maybe-wrap trace-wrap))]
+        tw (wm/assign-var 'trace-wrap (maybe-wrap trace-wrap))]
     ;; Must (read) and (eval) top-level forms in lockstep, because
     ;; evaluation of earlier forms can establish context for reading
     ;; later forms.  (E.g., tagged literals)
