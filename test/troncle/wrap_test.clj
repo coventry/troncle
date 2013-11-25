@@ -105,3 +105,15 @@
   (wrapper= '(try   (apply f args)  (finally    (pop-thread-bindings)))
             '(try (w (apply f args)) (finally (w (pop-thread-bindings))))))
 
+(deftest lead-fn-call-wrapping
+  (wrapper= '(   (constantly nil)     (inc 1))
+            '((w (constantly nil)) (w (inc 1))),
+            "does it know to wrap the lead form if it's not a symbol?"))
+
+(deftest loop-wrapping
+  (wrapper= '(loop [i    (inc 10)]     (inc i) (recur (dec i)))
+            '(loop [i (w (inc 10))] (w (inc i) (recur (w (dec i)))))))
+
+(deftest if-wrapping
+  (wrapper= '(if    (= i 0) 11  (recur    (dec i)))
+            '(if (w (= i 0)) 11 (recur (w (dec i))))))
