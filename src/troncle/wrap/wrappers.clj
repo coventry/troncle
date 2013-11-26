@@ -10,7 +10,7 @@
    ;; Following deals sensibly with function calls, since
    ;; function symbol will not be wrapped
    (seq?    form) (map wrapper form)
-   (map?    form) (into {} (map #(map wrapper)) form)
+   (map?    form) (into {} (map #(vec (map wrapper %)) form))
    (set?    form) (into #{} (map wrapper form))
    (vector? form) (into [] (map wrapper form))
    :else (throw (IllegalArgumentException.)

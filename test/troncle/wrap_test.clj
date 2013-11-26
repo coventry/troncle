@@ -21,7 +21,7 @@
         [(set/difference covered special-forms)
          (set/difference special-forms covered)])
 
-(defn wrapper [form] (if (sequential? form) `(~'w ~form) form))
+(defn wrapper [form] (if (coll? form) `(~'w ~form) form))
 (def w identity)
 
 (defmacro wrapper=
@@ -117,3 +117,7 @@
 (deftest if-wrapping
   (wrapper= '(if    (= i 0) 11  (recur    (dec i)))
             '(if (w (= i 0)) 11 (recur (w (dec i))))))
+
+(deftest map-wrapping
+  (wrapper= '(dissoc    {(inc 1) (dec 2)}  2)
+            '(dissoc (w {(inc 1) (dec 2)}) 2)))

@@ -3,8 +3,7 @@
   (:use [clojure.pprint :only (pprint)])
   (:require [troncle.wrap.wrappers :refer :all]
             [troncle.wrap.special-form-info :refer :all]
-            [clojure.set :as set])
-)
+            [clojure.set :as set]))
 
 (def general-wrap-dispatch
   "Special forms which need special logic"
@@ -12,7 +11,7 @@
    'deftype* wrap-deftype*, 'reify* wrap-reify*})
 
 (defn walk-wrap [wrapper form]
-  (if (not (sequential? form))
+  (if (not (coll? form))
     form ;; Can't walk into it, so not very interesting to trace
     (let [invocation (first form)
           wrapped-internals
