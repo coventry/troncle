@@ -165,7 +165,9 @@ VALUE: The result of evaluating form."
 
 (defn tracer
   [line-offset form form-transformed]
-  (if (not (wm/recur? form-transformed))
+  (if (and (not (wm/recur? form-transformed))
+           (and (coll? form-transformed)
+                (not= 'quote (first form-transformed))))
     (tracer* line-offset form form-transformed)
     form-transformed))
 
