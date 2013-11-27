@@ -265,3 +265,5 @@ will do that later, though.
 - lein deploy clojars
 
 - upload troncle.el to marmalade.  (There is an automated way to do this.)
+
+  [[https://clojars.org/lein-droid][https://clojars.org/lein-droid/latest-version.svg]]
