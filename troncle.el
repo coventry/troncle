@@ -45,6 +45,8 @@
   ;; Load the forms provided from clojure
   (with-temp-buffer (insert (troncle-get-elisp)) (eval-buffer)))
 
+(troncle-load-elisp)
+
 (provide 'troncle)
 
 ;;; troncle.el ends here
