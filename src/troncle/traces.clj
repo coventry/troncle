@@ -1,5 +1,6 @@
 (ns troncle.traces
   (:require [troncle.util :as u]
+            [troncle.macroshka :as wm]
             [clojure.tools.trace :as ctt]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -146,7 +147,7 @@ VALUE: The result of evaluating form."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Tracing macros
 
-(defn tracer
+(defn tracer*
   "Instrument a form with tracing code, tracking its source code
   position."
   [line-offset form form-transformed]
@@ -161,6 +162,12 @@ VALUE: The result of evaluating form."
        (when (@trace-cond ~args)
          (@report-trace-function ~args))
        ~value)))
+
+(defn tracer
+  [line-offset form form-transformed]
+  (if (not (wm/recur? form-transformed))
+    (tracer* line-offset form form-transformed)
+    form-transformed))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Convenience namespace
