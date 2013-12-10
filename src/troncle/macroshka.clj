@@ -23,7 +23,7 @@
         ;; (defmacro n [t] (println (macroexpand t) (-> 1 inc)))
         ;; (let [-> (fn [& args] args)] (n (-> 1 inc))) => (-> 1 inc) 2
         me      (macroexpand f)
-        _       (swap! @(find-var result-tree) conj [me ftree])
+        _       (swap! @(find-var result-tree) conj [me ftree &env])
         mwrapper (fn [g] (if (coll? g)
                            `(macroexpand-macro ~g ~vftree)
                            g))]
@@ -39,11 +39,11 @@
   macroexpand-macro phase."
   (fn [f] (if (not (coll? f))
             f
-            (let [[[f' t] & r] @expansions
+            (let [[[f' t env] & r] @expansions
                   ;; Wrong ctx for (macroexpand f), so can't check = f'
                   _            (swap! expansions rest)
                   rv           (reconstruct-expansion [f' t] wrapper)
-                  wrv          (if wrapper (wrapper f rv) rv)]
+                  wrv          (if wrapper (wrapper f rv env) rv)]
               ;; Mark forms which contain a recur, because the tracing
               ;; instrumentation can screw up tail position.
               (vary-meta wrv assoc ::recur?

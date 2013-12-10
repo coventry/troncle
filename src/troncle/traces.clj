@@ -150,12 +150,14 @@ VALUE: The result of evaluating form."
 (defn tracer*
   "Instrument a form with tracing code, tracking its source code
   position."
-  [line-offset form form-transformed]
+  [line-offset form form-transformed env]
   (let [[line column] ((juxt :line :column) (meta form))
         line (+ line line-offset)
         value  (gensym "value")
+        lb (keys env)
+        envmap (zipmap (map (fn [sym] `(quote ~sym)) lb) lb)
         args {:line line :column column :form (list 'quote form)
-              :value value}]
+              :value value :envmap envmap}]
     `(let [ ;; Evaluation happens once, here
            ~value ~form-transformed]
        (@trace-hook ~args)
@@ -164,11 +166,11 @@ VALUE: The result of evaluating form."
        ~value)))
 
 (defn tracer
-  [line-offset form form-transformed]
+  [line-offset form form-transformed env]
   (if (and (not (wm/recur? form-transformed))
            (and (coll? form-transformed)
                 (not= 'quote (first form-transformed))))
-    (tracer* line-offset form form-transformed)
+    (tracer* line-offset form form-transformed env)
     form-transformed))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

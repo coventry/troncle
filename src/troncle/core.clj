@@ -77,8 +77,8 @@
 (def never (constantly false))
 
 (defn maybe-wrap [trace-wrap]
-  (fn [f ft]
-    (if (-> f meta ::wrap) (trace-wrap f ft) ft)))
+  (fn [f ft env]
+    (if (-> f meta ::wrap) (trace-wrap f ft env) ft)))
 
 (defn trace-marked-forms
   "Read and evaluate each top-level form in source in the given ns.
