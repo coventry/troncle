@@ -19,9 +19,9 @@
   call to a traced var."
   (atom (constantly true)))
 
-(def trace-hook
+(def trace-hooks
   "Atom containing function which is run on every trace call"
-  (atom (constantly nil)))
+  (atom []))
 
 (def trace-log
   "List of trace reports"
@@ -54,7 +54,7 @@ VALUE: The result of evaluating form."
 (defn sh
   "Set the function which is called on every trace site"
   [fn]
-  (swap! trace-hook (constantly fn)))
+  (swap! trace-hooks conj fn))
 
 (defn sc
   "Set the predicate function telling troncle whether to report a
@@ -160,7 +160,7 @@ VALUE: The result of evaluating form."
               :value value :envmap envmap}]
     `(let [ ;; Evaluation happens once, here
            ~value ~form-transformed]
-       (@trace-hook ~args)
+       (doseq [h# @trace-hooks] (h# ~args))
        (when (@trace-cond ~args)
          (@report-trace-function ~args))
        ~value)))
