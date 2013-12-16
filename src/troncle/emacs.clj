@@ -1,6 +1,8 @@
 (ns troncle.emacs
   (:require [troncle.core :as c]
             [troncle.traces :as traces]
+            [troncle.convenience-namespace :as conv]
+            [troncle.debug :as d]
             [clojure.tools.trace :as ctt]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -37,6 +39,12 @@
   ;; discover/wrap-discover-logic does error handling
   {:message (pr-str (@traces/trace-execution-function)) :status :done})
 
+(defn debug-region [{:keys [transport] :as msg}]
+  (let [[thread-id setter] (d/set-debug-environment)
+        reply (str "Debugging thread " thread-id)]
+    (instrument-form msg setter)
+    (println reply)
+    {:message reply :status :done}))
 
 (defn set-exec-var
   "Set the function which is called when forms are sent for
