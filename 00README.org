@@ -258,6 +258,22 @@ will do that later, though.
 
    Will need to do this to get it on melpa.
 
+
+* Debugger
+
+It'd be nice to have an in-repl debugger, and I am not that far from
+doing it.  It would also be nice to enable multiple simultaneous
+debugging contexts.
+
+core/trace-marked-forms or emacs/Jtrace-region could put :debugger
+metadata on every form, and trace-hooks could be include a call to
+debug-repl/break, which looks up the :debugger metadata, and breaks
+accordingly.  Then it sets a channel in the breakpoints map.  Repl
+commands could take the :debugger symbol as an argument, and control the
+debugger in that way.  There could be a convenience function for the
+partial function/macro, which gets printed to the repl and the
+minibuffer when the form is instrumented.
+
 * Deploy checklist
 
 - Bump version numbers in project.clj and troncle.el

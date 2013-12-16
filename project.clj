@@ -7,6 +7,7 @@ code with tracing instrumentation from emacs."
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [org.clojars.coventry/tools.reader "0.8.0-SNAPSHOT"]
                  [org.clojure/tools.trace "0.7.6"]
-                 [caribou/clojure.walk2 "0.1.0"]]
+                 [caribou/clojure.walk2 "0.1.0"]
+                 [org.clojure/core.async "0.1.262.0-151b23-alpha"]]
   :repl-options {:nrepl-middleware [troncle.discover/wrap-discover]})
 

@@ -20,8 +20,8 @@
   (atom (constantly true)))
 
 (def trace-hooks
-  "Atom containing function which is run on every trace call"
-  (atom []))
+  "Atom containing map of functions which are run on every trace call"
+  (atom {}))
 
 (def trace-log
   "List of trace reports"
@@ -52,9 +52,9 @@ VALUE: The result of evaluating form."
   (swap! report-trace-function (constantly fn)))
 
 (defn sh
-  "Set the function which is called on every trace site"
-  [fn]
-  (swap! trace-hooks conj fn))
+  "Set a function which is called on every trace site"
+  [name fn]
+  (swap! trace-hooks assoc name fn))
 
 (defn sc
   "Set the predicate function telling troncle whether to report a
@@ -97,6 +97,11 @@ VALUE: The result of evaluating form."
   (println (format "L:%d C:%d %s\n=> %s" line column form (pr-str value))))
 
 (sr repl-report-trace) ;; Set as the default trace report
+
+(defn maybe-report-trace [args]
+  (when (@trace-cond args) (@report-trace-function args)))
+
+(sh :trace maybe-report-trace)
 
 ;; Taken from clojure.tools.trace.
 (defn trace-var
@@ -149,36 +154,31 @@ VALUE: The result of evaluating form."
 
 (defn tracer*
   "Instrument a form with tracing code, tracking its source code
-  position."
-  [line-offset form form-transformed env]
+  position.  line-offset: Offset added to all reported line numbers.
+  instrumentation-args: list of functions applied to args map for
+  inclusion in instrumentation.  Those arguments should be supplied in
+  a (partial).  The rest of the arguments are supplied during wrapping."
+  [line-offset instrumentation-args hooks form form-transformed env]
   (let [[line column] ((juxt :line :column) (meta form))
         line (+ line line-offset)
         value  (gensym "value")
-        lb (keys env)
-        envmap (zipmap (map (fn [sym] `(quote ~sym)) lb) lb)
         args {:line line :column column :form (list 'quote form)
-              :value value :envmap envmap}]
+              :value value}
+        args (reduce #(%2 %1 env) args instrumentation-args)]
     `(let [ ;; Evaluation happens once, here
            ~value ~form-transformed]
-       (doseq [h# @trace-hooks] (h# ~args))
-       (when (@trace-cond ~args)
-         (@report-trace-function ~args))
+       (doseq [[n# h#] @~hooks] (h# ~args))
        ~value)))
 
 (defn tracer
-  [line-offset form form-transformed env]
+  "See docstring for tracer*"
+  [line-offset instrumentation-args hooks form form-transformed env]
+  ;; Skip if form contains a (recur) in tail position, or is quoted.
   (if (and (not (wm/recur? form-transformed))
            (and (coll? form-transformed)
                 (not= 'quote (first form-transformed))))
-    (tracer* line-offset form form-transformed env)
+    (tracer* line-offset instrumentation-args hooks
+             form form-transformed env)
     form-transformed))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Convenience namespace
-
-(ns t)
-
-(doseq [[n v] (ns-publics 'troncle.traces)]
-  (eval `(def ~n ~v)))
-
-(ns troncle.traces)
+(require 'troncle.convenience-namespace :reload)
