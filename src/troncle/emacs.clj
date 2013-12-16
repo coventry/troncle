@@ -16,22 +16,27 @@
   (binding [*read-eval* nil]
     (read-string s)))
 
-(defn trace-region
+(defn instrument-form
   "Eval source, taken from source-region instrumenting all forms
   contained in trace-region with tracing"
-  [{:keys [transport source source-region trace-region ns] :as msg}]
+  [{:keys [transport source source-region trace-region ns] :as msg}
+   & instrumentation-args]
   (let [source-region (safe-read source-region)
         trace-region (safe-read trace-region)
         soffset (nth source-region 1)
         loffset (->> source c/line-starts
                      (c/line-column-from-offset soffset) first)
         [tstart tend] (map #(- (nth trace-region %) soffset) [1 2])
-        ns (-> ns symbol the-ns)]
-    (c/trace-marked-forms source tstart tend ns
-                           (partial traces/tracer loffset))
-    ;; Error handling is currently handled in
-    ;; discover/wrap-discover-logic.  
-    {:message (pr-str (@traces/trace-execution-function)) :status :done}))
+        ns (-> ns symbol the-ns)
+        wrapper (partial traces/tracer loffset instrumentation-args
+                         'troncle.traces/trace-hooks)]
+    (c/trace-marked-forms source tstart tend ns wrapper)))
+
+(defn trace-region [msg]
+  (instrument-form msg)
+  ;; discover/wrap-discover-logic does error handling
+  {:message (pr-str (@traces/trace-execution-function)) :status :done})
+
 
 (defn set-exec-var
   "Set the function which is called when forms are sent for
