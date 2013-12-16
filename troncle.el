@@ -59,6 +59,19 @@ between point and mark."
 			       (end-of-defun)  (point))))
     (list start end)))
 
+(defun troncle-send-region (rstart rend tracefn)
+  (save-excursion
+    (let* ((defun-region (troncle-toplevel-region-for-region))
+	   (dstart (car defun-region)) (dend (car (cdr defun-region)))
+	   (fn (buffer-file-name)))
+      (troncle--send-op tracefn
+		     ;; *-send-op can only handle strings
+		     (list "source" (buffer-substring-no-properties
+				     dstart dend)
+			   "source-region" (str (cons fn defun-region))
+			   "trace-region" (str (list fn rstart rend)))
+		     (troncle-op-handler (current-buffer)))))  )
+
 (defun troncle-trace-region (rstart rend)
   "Send top-level form point is in to troncle.emacs/trace-region
 via nrepl protocol.  The form is re-compiled, with all evaluable
@@ -67,17 +80,11 @@ instrumented wiht tracing.  Then
 troncle.traces/trace-execution-function is executed.  (See
 troncle-set-exec-var for a way to set this.)"
   (interactive "r")
-  (save-excursion
-    (let* ((defun-region (troncle-toplevel-region-for-region))
-	   (dstart (car defun-region)) (dend (car (cdr defun-region)))
-	   (fn (buffer-file-name)))
-      (troncle--send-op "trace-region"
-		     ;; *-send-op can only handle strings
-		     (list "source" (buffer-substring-no-properties
-				     dstart dend)
-			   "source-region" (str (cons fn defun-region))
-			   "trace-region" (str (list fn rstart rend)))
-		     (troncle-op-handler (current-buffer))))))
+  (troncle-send-region rstart rend "trace-region"))
+
+(defun troncle-debug-region (rstart rend)
+  (interactive "r")
+  (troncle-send-region rstart rend "debug-region"))
 
 (defun troncle-discover-choose-var (ns exec-fn)
   "Choose a var to be executed when forms are sent for tracing
