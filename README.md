@@ -1,3 +1,5 @@
+I'm not sure how much further I'm going to push it as an emacs development tool.  I suspect that the future of clojure debugging is something like an integration of [Schmetterling](https://github.com/prismofeverything/schmetterling) and Light Table, now that it's open-sourced.  For future work, I am thinking of repurposing troncle's core macroshka library to use the javascript in [Python Tutor](http://pythontutor.com/) to display the evolution of small clojure data structures.  
+
 # troncle
 
 Troncle is a proof-of-concept integration of clojure's tracing tools
