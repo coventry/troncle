@@ -3,7 +3,7 @@
 ;; Version: 0.1.2
 ;; Author: Alex Coventry
 ;; URL: https://github.com/coventry/troncle
-;; Package-Requires: ((nrepl "0.2.0"))
+;; Package-Requires: ((cider "0.4.0") (clojure-mode "2"))
 
 ;;; Commentary:
 
